@@ -65,7 +65,8 @@ aside > .bazhu,
 .card_userinfo_marry,
 .right_section > div[class$="  "],
 #thread_list > .j_thread_list + li:not(.j_thread_list),
-.suggestion_list > li[data-field^="{\"sugType\":\"operation_"] {
+.suggestion_list > li[data-field^="{\"sugType\":\"operation_"],
+#video_frs_head {
     display: none!important;
 }
 
