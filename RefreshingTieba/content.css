@@ -1,0 +1,127 @@
+[id="pagelet_frs-aside/pagelet/ad"],
+[id*="encourage"],
+[id*="entertainment"],
+[id*="hottopic"],
+[id*="firework"],
+[class*="encourage"],
+[class*="entertainment"],
+[class*="firework"],
+[class*="celebrity"],
+[class*="medal"],
+[class*="tbmall"],
+[class*="vip"]:not(.vip_red),
+[class*="wangmeng"],
+a[href^="http://c.tieba.baidu.com/c/s/download/"],
+a[href="/f?kw=%D3%A6%D3%C3%D6%D0%D0%C4&fr=userbar"],
+[data-daid],
+.j-placeholder-pay-member,
+#forum_recommend,
+.guidance_fc,
+.content-ad,
+#j_p_postlist > div[class="l_post l_post_bright j_l_post clearfix  "] + div:not([class="l_post l_post_bright j_l_post clearfix  "]),
+.l_post[data-isautoreply],
+.post_bubble_top,
+.post_bubble_bottom,
+.share_btn_wrapper,
+.topic_list_box,
+#pb_adbanner,
+.xiu8_follow_warn,
+.u_member,
+.u_mytbmall,
+.u_game,
+.u_blue,
+.u_grab_treasure,
+.tbui_fbar_bazhu,
+.tbui_fbar_props,
+.tbui_fbar_tsukkomi,
+.tbui_fbar_share,
+.user_score,
+.save_face_bg,
+.pre_icon_wrap,
+.d_nameplate,
+.d_icons,
+.icon_wrap,
+.post-foot-send-gift-btn,
+.thread_recommend,
+#j_navtab_wanle,
+.app_forum_top_nav,
+.userinfo_scores,
+.ihome-aside-gift-center,
+.ihome-aside-grab-treasure,
+.forum_recommend,
+#spage_liveshow_slide,
+#spage_game_tab_wrapper,
+#plat_act_wrapper,
+#media_item,
+#adide_platform,
+.r-right-sec,
+#video_aside,
+aside > .bazhu,
+#j_navtab_game,
+.game-head-game-info-wrapper,
+.page404  .video-wrapper,
+.page404  .hot-wraper,
+.page404  #error_404_iframe,
+.card_userinfo_marry,
+.right_section > div[class$="  "],
+#thread_list > .j_thread_list + li:not(.j_thread_list),
+.suggestion_list > li[data-field^="{\"sugType\":\"operation_"] {
+    display: none!important;
+}
+
+
+/*会员大老爷再见*/
+
+.post_bubble_middle {
+    background: none!important;
+}
+
+html .red_text,
+html .red-text,
+html .vip_red,
+html .vip-red,
+html .vip_red:hover,
+html .vip-red:hover,
+html .vip_red:visited,
+html .vip-red:visited {
+    color: inherit!important;
+}
+
+html .member_thread_title_frs a,
+html .member_thread_title_frs a:hover {
+    color: #2d64b3!important;
+}
+
+html .member_thread_title_frs a:visited {
+    color: #653096!important;
+}
+
+.p_author_face.j_frame_guide {
+    background: none repeat scroll 0 0 #FFF!important;
+    border: 1px solid #CCC!important;
+    padding: 3px!important;
+}
+
+
+/*奇怪的样式修复*/
+
+#headinfo_wrap {
+    margin-top: 0!important;
+    height: 241px;
+}
+
+
+
+/*贴吧首页屏蔽广告之后发现右边没东西了……不得已搞个伪宽屏样式*/
+
+.r-left-sec,
+.r-left-sec .n_right {
+    width: 100%!important;
+}
+/*神TM一个纯色导航条竟然是用图片当背景的……而且还不够长……*/
+.r-left-sec #sub_nav_wrap {
+    background: #f8f8f8!important;
+    box-shadow: 0 0 0 1px #fdfdfd, 0 0 0 2px #e2e2e2, 1px 1px 0 2px #e7e7e7;
+    margin: 3px;
+    width: 774px!important;
+}
