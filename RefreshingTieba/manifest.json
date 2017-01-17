@@ -1,7 +1,7 @@
 {
    "content_scripts": [ {
       "all_frames": true,
-      "js": [ "content.js" ],
+      "js": [ "setting.js", "run.js" ],
       "css": [ "content.css" ],
       "matches": [ "http://tieba.baidu.com/*", "https://tieba.baidu.com/*" ],
       "exclude_globs": [ "*://tieba.baidu.com/game/*", "*://tieba.baidu.com/tbmall/*", "*://tieba.baidu.com/tbvip/*" ],
