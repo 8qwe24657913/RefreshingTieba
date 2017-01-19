@@ -65,6 +65,16 @@ aside_platform
 avideo
 tb_gram
 live_tv
+spread
+activity
+post_marry
+member_out_date_warn
+buy_controller
+tbean
+iframe_head
+nameplate
+gift
+sign_card
 `);
 // 从模板中移除的元素
 var selector = join(`
@@ -77,6 +87,11 @@ var selector = join(`
 [class*="entertainment"]
 [class*="firework"]
 .game-head-game-info-wrapper
+.game_frs_in_head
+.top_iframe
+#forum_recommend
+#thread_list > li:not(.j_thread_list)
+#thread_list > style
 `);
 // bigpipe黑名单，全名
 var bigpipeBlackList = split(`

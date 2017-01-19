@@ -24,29 +24,6 @@ function inject(setting, getSpecialModules) {
         Object.freeze(emptyStr);
     }
     var specialModules = getSpecialModules(noop, emptyStr);
-    // Fxck PercentLoaded
-    Object.defineProperties(HTMLEmbedElement.prototype, {
-        PercentLoaded: {
-            configurable: true,
-            enumerable: false,
-            value() {
-                return 100;
-            },
-            writable: true
-        },
-        getData: {
-            configurable: true,
-            enumerable: false,
-            value: noop,
-            writable: true
-        },
-        setData: {
-            configurable: true,
-            enumerable: false,
-            value: noop,
-            writable: true
-        }
-    });
     // Logging
     var log;
     console.info('清爽贴吧正在运行中');
@@ -67,21 +44,24 @@ function inject(setting, getSpecialModules) {
             if (newProp && newProp !== prop) parent[name] = newProp;
             return;
         }
-        var descriptor = Object.getOwnPropertyDescriptor(parent, name);
-        var enumerable = descriptor ? descriptor.enumerable : true;
-        Object.defineProperty(parent, name, {
+        var descriptor = Object.getOwnPropertyDescriptor(parent, name) || {
             configurable: true,
-            enumerable,
+            writable: true,
+            enumerable: true
+        };
+        var writable = descriptor.writable;
+        delete descriptor.value;
+        delete descriptor.writable;
+        Object.defineProperty(parent, name, Object.assign({}, descriptor, {
             get: noop,
             set: function(e) {
-                Object.defineProperty(parent, name, {
-                    configurable: true,
-                    enumerable,
-                    writable: true,
-                    value: filter(e) || e
-                });
+                delete descriptor.get;
+                delete descriptor.set;
+                descriptor.writable = writable;
+                descriptor.value = filter(e) || e;
+                Object.defineProperty(parent, name, descriptor);
             }
-        });
+        }));
     }
 
     function hijack(parent, path, filter) {
@@ -100,6 +80,7 @@ function inject(setting, getSpecialModules) {
             return text.includes(word);
         });
     }
+    //delete window.Promise; // Chrome上使用自带的Promise会在Take Heap Snapshot时使页面崩溃
     // Bigpipe
     hijack(window, 'Bigpipe', function(Bigpipe) {
         // 加载过滤
@@ -123,10 +104,11 @@ function inject(setting, getSpecialModules) {
         function remove(elem) {
             elem.remove();
         }
+        var forEach = [].forEach;
 
         function elementFilter(html) {
             var doc = new DOMParser().parseFromString(html, 'text/html');
-            [].forEach.call(doc.querySelectorAll(selector), debugMode ? function(elem) {
+            forEach.call(doc.querySelectorAll(selector), debugMode ? function(elem) {
                 var id, className;
                 if (elem.hasAttribute('id')) id = elem.id;
                 if (elem.hasAttribute('class')) className = elem.className;
@@ -160,7 +142,7 @@ function inject(setting, getSpecialModules) {
             if (!check(a)) return;
             return _use.call(Module, a, b, c, d);
         };
-        var defined = {};
+        var defined = Object.create ? Object.create(null) : {};
         var createDebugInitial;
         if (debugMode) createDebugInitial = function(path) {
             return function() {
@@ -216,7 +198,30 @@ function inject(setting, getSpecialModules) {
             return _define.call(Module, info);
         };
     });
-    // 统计过滤
+    // Fxck PercentLoaded
+    Object.defineProperties(HTMLEmbedElement.prototype, {
+        PercentLoaded: {
+            configurable: true,
+            enumerable: false,
+            value() {
+                return 100;
+            },
+            writable: true
+        },
+        getData: {
+            configurable: true,
+            enumerable: false,
+            value: noop,
+            writable: true
+        },
+        setData: {
+            configurable: true,
+            enumerable: false,
+            value: noop,
+            writable: true
+        }
+    });
+
     function setNoop(parent, name) {
         Object.defineProperty(parent, name, {
             value: noop,
@@ -224,31 +229,49 @@ function inject(setting, getSpecialModules) {
             configurable: false
         });
     }
+    // 统计过滤
     setNoop(window, 'alog');
-    hijack(window, '$', function($) {
-        hijack($, 'stats', function(stats) {
-            ['hive', 'processTag', 'scanPage', 'sendRequest', 'track', 'redirect'].forEach(function(name) {
-                setNoop(stats, name);
-            });
-        });
-        hijack($, 'swf', function(swf) { // 没什么卵用，不想看见报错而已
-            setNoop(swf, 'remote');
+    hijack(window, '$.stats', function(stats) {
+        ['hive', 'processTag', 'scanPage', 'sendRequest', 'track', 'redirect'].forEach(function(name) {
+            setNoop(stats, name);
         });
     });
     // 免登录看帖
     hijack(window, 'PageData.user', function(user) {
         if (user.is_login) return; // 已登录
         var is_login = false; // 不能直接设置成1，因为会影响右上角显示，感谢@榕榕
-        document.addEventListener('DOMContentLoaded', function listener() { // DOM加载完成后改成已登录状态
+        document.addEventListener('DOMContentLoaded', function() { // DOM加载完成后改成已登录状态
             is_login = 1;
-            document.removeEventListener('DOMContentLoaded', listener, true);
-        }, true);
+        }, {
+            capture: true,
+            once: true,
+            passive: true
+        });
         Object.defineProperty(user, 'is_login', { // 不直接改，因为会被Object.freeze()，换成getter（虽然PB页现在不freeze
-            configurable: false,
-            get: function() {
+            get() {
                 return is_login;
             }
         });
+    });
+    hijack(EventTarget, 'prototype', function(prototype) { // 滚动速度提升
+        var eventTypes = 'wheel,mousewheel,DOMMouseScroll,MozMousePixelScroll,scroll,touchstart,touchmove,touchend,touchcancel'.split(',');
+        var _add = prototype.addEventListener,
+            _remove = prototype.removeEventListener;
+        prototype.addEventListener = function(type, handler, capture) {
+            if ('mousemove' === type) return; // 监听这个的都是分享、XSS监控这种鸡肋玩意
+            if (!eventTypes.includes(type) || 'boolean' !== typeof capture) return _add.call(this, type, handler, capture);
+            return _add.call(this, type, handler, {
+                capture,
+                passive: true
+            });
+        }
+        prototype.removeEventListener = function(type, handler, capture) {
+            if (!eventTypes.includes(type) || 'boolean' !== typeof capture) return _remove.call(this, type, handler, capture);
+            return _remove.call(this, type, handler, {
+                capture,
+                passive: true
+            });
+        }
     });
 }
 (function() {
