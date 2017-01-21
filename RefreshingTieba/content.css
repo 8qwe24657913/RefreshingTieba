@@ -58,14 +58,36 @@ a[href="/f?kw=%D3%A6%D3%C3%D6%D0%D0%C4&fr=userbar"],
 #video_aside,
 aside > .bazhu,
 #j_navtab_game,
-.game-head-game-info-wrapper,
 .page404  .video-wrapper,
 .page404  .hot-wraper,
 .page404  #error_404_iframe,
 .card_userinfo_marry,
 .right_section > div[class$="  "],
 #thread_list > .j_thread_list + li:not(.j_thread_list),
-.suggestion_list > li[data-field^="{\"sugType\":\"operation_"] {
+.suggestion_list > li[data-field^="{\"sugType\":\"operation_"],
+#video_frs_head {
+    display: none!important;
+}
+
+/*贴吧广告机器人*/
+/*这五个我看μblock屏蔽规则有就照抄了*/
+.l_post[data-field^="{\"author\":{\"user_id\":50012654,"], /*善良的小鸟 这个我也不知道什么鬼，大概是测试账号*/
+.l_post[data-field^="{\"author\":{\"user_id\":1990070693,"], /*贴吧触点推广*/
+.l_post[data-field^="{\"author\":{\"user_id\":1480194257,"], /*房产快讯大管家*/
+.l_post[data-field^="{\"author\":{\"user_id\":1480174042,"], /*房产小站长*/
+.l_post[data-field^="{\"author\":{\"user_id\":1224761005,"], /*房产速讯*/
+/*SB新年表情包，名单来自http://tieba.baidu.com/p/4945949828?pid=102814221827&cid=0#102814221827*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851596475,"], /*滑稽姐妹花*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617783,"], /*名侦探课难*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851591509,"], /*贴吧大叔叔*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617782,"], /*算命鸡爪*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617780,"], /*贴吧小姐姐*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851596473,"], /*鸡年歌友*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617778,"], /*主要是心灵美*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617777,"], /*秋名山第一名*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617779,"], /*贴吧小哥哥*/
+.l_post[data-field^="{\"author\":{\"user_id\":2852576200,"] /*天下大大稽*/
+{
     display: none!important;
 }
 
