@@ -80,7 +80,6 @@ function inject(setting, getSpecialModules) {
             return text.includes(word);
         });
     }
-    //delete window.Promise; // Chrome上使用自带的Promise会在Take Heap Snapshot时使页面崩溃
     // Bigpipe
     hijack(window, 'Bigpipe', function(Bigpipe) {
         // 加载过滤
@@ -101,32 +100,65 @@ function inject(setting, getSpecialModules) {
             return _register.call(Bigpipe, name, info);
         };
         // 模板过滤
-        function remove(elem) {
-            elem.remove();
-        }
-        var forEach = [].forEach;
-
-        function elementFilter(html) {
-            var doc = new DOMParser().parseFromString(html, 'text/html');
-            forEach.call(doc.querySelectorAll(selector), debugMode ? function(elem) {
-                var id, className;
-                if (elem.hasAttribute('id')) id = elem.id;
-                if (elem.hasAttribute('class')) className = elem.className;
-                remove(elem);
-                log('Blocked element: ' + (id ? `id="${id}"` : `class="${className}"`));
-            } : remove);
-            return doc.body.innerHTML;
-        }
         Bigpipe.debug(true);
-        //var _getHTML = Bigpipe.Pagelet.prototype._getHTML;
-        Bigpipe.Pagelet.prototype._getHTML = function() {
-            if ("undefined" !== typeof this.content) return this.content;
-            var elem = document.getElementById('pagelet_html_' + this.id);
-            if (!elem) return false;
-            var model = elem.innerHTML.trim().match(/^<!--([\s\S]*)-->$/);
-            return model ? elementFilter(model[1]) : '';
-        };
+        var Pagelet = Bigpipe.Pagelet;
         Bigpipe.debug(false);
+        var remove = debugMode ? function(elem) {
+            var id, className;
+            if (elem.hasAttribute('id')) id = elem.id;
+            if (elem.hasAttribute('class')) className = elem.className;
+            elem.remove();
+            log('Blocked element: ' + (id ? `id="${id}"` : `class="${className}"`));
+        } : function(elem) {
+            elem.remove();
+        };
+        var range = document.createRange();
+        range.selectNodeContents(document.documentElement);
+        Pagelet.prototype._getHTML = function() { // 修改版在有元素时会返回一个装着元素的fragment以提高性能
+            var html, elem;
+            if ("undefined" !== typeof this.content) { // 钦定了this.content
+                html = this.content;
+            } else if (elem = document.getElementById('pagelet_html_' + this.id)) { // 从模板中获取
+                html = elem.firstChild.data; // 不要使用正则
+                elem.remove(); // 移除模板移到这里，以免多次getElementById
+            } else { // 什么都没有
+                return false;
+            }
+            if (!html) return html; // 没有元素时表现和原版一样
+            var fragment = range.createContextualFragment(html),
+                arr = fragment.querySelectorAll(selector), // NodeList is immutable
+                l = arr.length;
+            while (l--) remove(arr[l]);
+            return fragment;
+        };
+        var $temp, temp = document.createDocumentFragment(),
+            clearId = 0;
+
+        function empty(elem) { // 用jq是为了尝试解决内存泄漏，先把内容移出，一会把内容cleanData(因为比较费时)
+            var child;
+            if (!elem.hasChildNodes()) return;
+            if (!window.jQuery) return elem.innerHTML = '';
+            while (child = elem.firstChild) temp.appendChild(child);
+            if (!clearId) clearId = setTimeout(function() { // 不要在当前事件cleanData
+                if (!$temp) $temp = jQuery(temp);
+                $temp.empty();
+                clearId = 0;
+            }, 50);
+        }
+        var LOADED = 1;
+        Pagelet.prototype._appendTo = function(pagelet) {
+            if (!(pagelet instanceof Pagelet)) throw new TypeError(pagelet + "is not a pagelet.");
+            if (this.state >= LOADED) throw new Error("pagelet[" + this.id + "] is already mounted");
+            var content = this._getHTML();
+            if (content !== false) {
+                if (!pagelet.document) throw new Error("Cannot append pagelet[" + this.id + "] to documentless pagelet[" + pagelet.id + "]");
+                var doc = this.document = this._getPlaceholder(pagelet.document);
+                if (!doc) throw new Error("Cannot find the placeholder for pagelet[" + this.id + "]");
+                empty(doc); // 清空doc
+                if (content) doc.appendChild(content);
+            }
+            return this
+        };
     });
     // 模块过滤
     hijack(window, '_.Module', function(Module) {
@@ -143,8 +175,7 @@ function inject(setting, getSpecialModules) {
             return _use.call(Module, a, b, c, d);
         };
         var defined = Object.create ? Object.create(null) : {};
-        var createDebugInitial;
-        if (debugMode) createDebugInitial = function(path) {
+        var createInitial = debugMode ? function(path) {
             return function() {
                 Object.setPrototypeOf(this, new Proxy(Object.getPrototypeOf(this), {
                     get(target, property, receiver) {
@@ -157,7 +188,7 @@ function inject(setting, getSpecialModules) {
                     }
                 }));
             };
-        };
+        } : createNoop;
 
         function fakeDefine(path, sub_ori) {
             if (defined[path]) {
@@ -165,9 +196,10 @@ function inject(setting, getSpecialModules) {
                 return;
             }
             var sub = {
-                initial: debugMode ? createDebugInitial(path) : createNoop() // 不用同一个initial，因为这上面会被做标记
+                initial: createInitial(path) // 不用同一个initial，因为这上面会被做标记
             };
-            if (specialModules[path]) Object.assign(sub, specialModules[path]);
+            var sub2 = specialModules.block[path];
+            if (sub2) Object.assign(sub, sub2);
             defined[path] = debugMode ? (sub_ori || 'nosub') : 2;
             _define.call(Module, {
                 path,
@@ -193,6 +225,8 @@ function inject(setting, getSpecialModules) {
                     console.warn('贴吧精简脚本遇到问题：未知的requires字段', info);
                 }
             }
+            var sub2 = specialModules.override[info.path];
+            if (sub2) Object.assign(info.sub, sub2);
             defined[info.path] = 1;
             if (debugMode) arr2.push(info.path);
             return _define.call(Module, info);

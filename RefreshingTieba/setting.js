@@ -114,52 +114,59 @@ fanclub/widget/fancard
 function getSpecialModules(noop, emptyStr) {
     'use strict';
     return {
-        "props/component/PropsApi": {
-            showUI: emptyStr,
-            showUIHtml: emptyStr
+        block: {
+            "props/component/PropsApi": {
+                showUI: emptyStr,
+                showUIHtml: emptyStr
+            },
+            "puser/component/PropsApi": {
+                showUIHtml: emptyStr
+            },
+            "user/widget/icons": {
+                getPreIconHtml: emptyStr,
+                getTbvipIconHtml: emptyStr,
+                getIconsHtml: emptyStr
+            },
+            "puser/widget/icons": {
+                getPreIconHtml: emptyStr,
+                getTbvipIconHtml: emptyStr,
+                getIconsHtml: emptyStr
+            },
+            "user/widget/month_icon": {
+                getMonthIcon: emptyStr
+            },
+            "puser/widget/MonthIcon": {
+                getMonthIcon: emptyStr
+            },
+            "ihome/widget/MonthIcon": {
+                getMonthIcon: emptyStr
+            },
+            "user/widget/interaction": {
+                _resetDataObj: noop
+            },
+            "puser/widget/Interaction": {
+                _resetDataObj: noop
+            },
+            "ihome/widget/Interaction": {
+                _resetDataObj: noop
+            },
+            "props/widget/Residual": {
+                showUI: emptyStr
+            },
+            "tbui/widget/tbshare_popup": {
+                setShareContent: noop
+            },
+            "tbmall/component/util": {
+                getMaxLevel: function() {
+                    return 0;
+                }
+            },
         },
-        "puser/component/PropsApi": {
-            showUIHtml: emptyStr
-        },
-        "user/widget/icons": {
-            getPreIconHtml: emptyStr,
-            getTbvipIconHtml: emptyStr,
-            getIconsHtml: emptyStr
-        },
-        "puser/widget/icons": {
-            getPreIconHtml: emptyStr,
-            getTbvipIconHtml: emptyStr,
-            getIconsHtml: emptyStr
-        },
-        "user/widget/month_icon": {
-            getMonthIcon: emptyStr
-        },
-        "puser/widget/MonthIcon": {
-            getMonthIcon: emptyStr
-        },
-        "ihome/widget/MonthIcon": {
-            getMonthIcon: emptyStr
-        },
-        "user/widget/interaction": {
-            _resetDataObj: noop
-        },
-        "puser/widget/Interaction": {
-            _resetDataObj: noop
-        },
-        "ihome/widget/Interaction": {
-            _resetDataObj: noop
-        },
-        "props/widget/Residual": {
-            showUI: emptyStr
-        },
-        "tbui/widget/tbshare_popup": {
-            setShareContent: noop
-        },
-        "tbmall/component/util": {
-            getMaxLevel: function() {
-                return 0;
-            }
-        },
+        override: {
+            "frs-list/pagelet/thread_list": {
+                checkLogin: noop
+            },
+        }
     };
 }
 var setting = {
