@@ -288,12 +288,12 @@ function inject(setting, getSpecialModules) {
         });
     });
     hijack(EventTarget, 'prototype', function(prototype) { // 滚动速度提升
-        var eventTypes = 'wheel,mousewheel,DOMMouseScroll,MozMousePixelScroll,scroll,touchstart,touchmove,touchend,touchcancel'.split(',');
+        var eventTypes = 'wheel,mousewheel,DOMMouseScroll,MozMousePixelScroll,scroll,touchstart,touchmove,touchend,touchcancel,mousemove'.split(',');
         var _add = prototype.addEventListener,
             _remove = prototype.removeEventListener;
         prototype.addEventListener = function(type, handler, capture) {
+            if (!eventTypes.includes(type) || 'boolean' !== typeof capture || ![window, document, document.body].includes(this) || new Error().stack.includes('eval')) return _add.call(this, type, handler, capture);
             if ('mousemove' === type) return; // 监听这个的都是分享、XSS监控这种鸡肋玩意
-            if (!eventTypes.includes(type) || 'boolean' !== typeof capture) return _add.call(this, type, handler, capture);
             return _add.call(this, type, handler, {
                 capture,
                 passive: true

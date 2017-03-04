@@ -90,7 +90,7 @@ var selector = join(`
 .game_frs_in_head
 .top_iframe
 #forum_recommend
-#thread_list > li:not(.j_thread_list)
+#thread_list > li:not(.j_thread_list):not(.thread_top_list_folder)
 #thread_list > style
 `);
 // bigpipe黑名单，全名
