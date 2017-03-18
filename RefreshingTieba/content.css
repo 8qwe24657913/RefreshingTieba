@@ -65,7 +65,9 @@ aside > .bazhu,
 .right_section > div[class$="  "],
 #thread_list > .j_thread_list + li:not(.j_thread_list),
 .suggestion_list > li[data-field^="{\"sugType\":\"operation_"],
-#video_frs_head {
+#video_frs_head,
+.tbui_fbar_nobottle,
+.tbui_fbar_bazhu {
     display: none!important;
 }
 
@@ -132,6 +134,9 @@ html .member_thread_title_frs a:visited {
     margin-top: 0!important;
     height: 241px;
 }
+.tbui_aside_float_bar li.tbui_fbar_post {
+    margin-bottom: 5px!important;
+}
 
 
 
@@ -147,4 +152,20 @@ html .member_thread_title_frs a:visited {
     box-shadow: 0 0 0 1px #fdfdfd, 0 0 0 2px #e2e2e2, 1px 1px 0 2px #e7e7e7;
     margin: 3px;
     width: 774px!important;
+}
+
+
+/*去广告用*/
+@keyframes ps_cb_ad {
+    from {
+        clip: rect(1px, auto, auto, auto);
+    }
+    to {
+        clip: rect(0px, auto, auto, auto);
+    }
+}
+
+.ps_cb {
+    animation-duration: 0.001s;
+    animation-name: ps_cb_ad;
 }

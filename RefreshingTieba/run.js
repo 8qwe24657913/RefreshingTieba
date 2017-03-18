@@ -307,6 +307,9 @@ function inject(setting, getSpecialModules) {
             });
         }
     });
+    document.addEventListener("animationstart", function(event) {
+        if (event.animationName === "ps_cb_ad") event.target.replaceWith(event.target.firstChild);
+    }, false);
 }
 (function() {
     'use strict';

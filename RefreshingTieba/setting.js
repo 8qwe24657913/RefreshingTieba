@@ -92,6 +92,7 @@ var selector = join(`
 #forum_recommend
 #thread_list > li:not(.j_thread_list):not(.thread_top_list_folder)
 #thread_list > style
+.app_download_box
 `);
 // bigpipe黑名单，全名
 var bigpipeBlackList = split(`
