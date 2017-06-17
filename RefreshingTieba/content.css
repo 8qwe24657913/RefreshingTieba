@@ -66,6 +66,8 @@ aside > .bazhu,
 #thread_list > .j_thread_list + li:not(.j_thread_list),
 .suggestion_list > li[data-field^="{\"sugType\":\"operation_"],
 #video_frs_head,
+.gift-goin,
+#fixed_bar,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
     display: none!important;
@@ -126,6 +128,10 @@ html .member_thread_title_frs a:visited {
     border: 1px solid #CCC!important;
     padding: 3px!important;
 }
+a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
+    display: inline!important;
+    pointer-events: none;
+}
 
 
 /*奇怪的样式修复*/
@@ -168,4 +174,5 @@ html .member_thread_title_frs a:visited {
 .ps_cb {
     animation-duration: 0.001s;
     animation-name: ps_cb_ad;
+    pointer-events: none;
 }
