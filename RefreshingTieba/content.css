@@ -68,6 +68,15 @@ aside > .bazhu,
 #video_frs_head,
 .gift-goin,
 #fixed_bar,
+.j_couplet,
+.top_toutu_admarks,
+.user-visit-card-marriage-propose,
+.marriage,
+[j-user-visit-card-marriage-propose],
+[j-user-visit-card-send-gift],
+.app_download_box,
+a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
+.card_userinfo_guide,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
     display: none!important;
@@ -128,9 +137,11 @@ html .member_thread_title_frs a:visited {
     border: 1px solid #CCC!important;
     padding: 3px!important;
 }
+.tail-info > a[href^="http://c.tieba.baidu.com/c/s/download/"],
 a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     display: inline!important;
     pointer-events: none;
+    color: inherit!important;
 }
 
 
@@ -161,7 +172,7 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
 }
 
 
-/*去广告用*/
+/*帖子内关键词链接广告*/
 @keyframes ps_cb_ad {
     from {
         clip: rect(1px, auto, auto, auto);
@@ -175,4 +186,22 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     animation-duration: 0.001s;
     animation-name: ps_cb_ad;
     pointer-events: none;
+}
+
+/*人工智能大会背景广告，只是强行钦定background会与一些样式不兼容，不钦定又会闪一下，所以需要css+js配合……*/
+@keyframes special_conf_skin {
+    from {
+        clip: rect(1px, auto, auto, auto);
+    }
+    to {
+        clip: rect(0px, auto, auto, auto);
+    }
+}
+
+.special_conf_skin {
+    animation-duration: 0.001s;
+    animation-name: special_conf_skin;
+}
+body.special_conf_skin, body.special_conf_skin .wrap1 {
+    background: initial;
 }

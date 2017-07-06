@@ -307,9 +307,6 @@ function inject(setting, getSpecialModules) {
             });
         }
     });
-    document.addEventListener("animationstart", function(event) {
-        if (event.animationName === "ps_cb_ad") event.target.replaceWith(event.target.firstChild);
-    }, false);
 }
 (function() {
     'use strict';
@@ -317,4 +314,18 @@ function inject(setting, getSpecialModules) {
     s.textContent = `(${inject}(${JSON.stringify(setting)},${getSpecialModules}))`;
     document.documentElement.appendChild(s);
     s.remove();
+}());
+(function() { // 特殊广告处理
+    'use strict';
+    document.addEventListener("animationstart", function(event) {
+        var target = event.target;
+        switch (event.animationName) {
+            case 'ps_cb_ad':
+                target.replaceWith(target.firstChild);
+                break;
+            case 'special_conf_skin':
+                target.classList.remove('special_conf_skin');
+                break;
+        }
+    }, false);
 }());
