@@ -52,7 +52,6 @@ asidead
 score
 icon
 localpbtop
-fakegif
 localposter
 interaction
 comtrial
@@ -75,6 +74,8 @@ iframe_head
 nameplate
 gift
 sign_card
+conf_skin
+confskin
 `);
 // 从模板中移除的元素
 var selector = join(`
@@ -110,6 +111,13 @@ var moduleBlackList = split(`
 ueditor/widget/topic_suggestion
 puser/widget/myApp
 fanclub/widget/fancard
+star/widget/crowdfundingTraveling
+pfrs/widget/FanspartyAside
+ppb/widget/postList/PrintFlower
+ppb/widget/specialAutoFocus
+puser/widget/ticketWarning
+fanclub/widget/fan_aside
+pfrs/widget/frs_stamp_notice
 `);
 // 屏蔽后需要覆盖原方法的模块
 function getSpecialModules(noop, emptyStr) {
@@ -157,6 +165,9 @@ function getSpecialModules(noop, emptyStr) {
             "tbui/widget/tbshare_popup": {
                 setShareContent: noop
             },
+            "pcommon/widget/pb_track": {
+                _track: noop
+            },
             "tbmall/component/util": {
                 getMaxLevel: function() {
                     return 0;
@@ -166,6 +177,9 @@ function getSpecialModules(noop, emptyStr) {
         override: {
             "frs-list/pagelet/thread_list": {
                 checkLogin: noop
+            },
+            "puser/widget/sign_mod_bright": {
+                handlePrintFlower: noop
             },
         }
     };

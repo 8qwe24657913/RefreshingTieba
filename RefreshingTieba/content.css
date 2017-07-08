@@ -77,6 +77,8 @@ aside > .bazhu,
 .app_download_box,
 a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .card_userinfo_guide,
+.userinfo_username + div[style]:not([class]):not([id]),
+.crowdfunding-traveling-wrapper,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
     display: none!important;
@@ -186,22 +188,4 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     animation-duration: 0.001s;
     animation-name: ps_cb_ad;
     pointer-events: none;
-}
-
-/*人工智能大会背景广告，只是强行钦定background会与一些样式不兼容，不钦定又会闪一下，所以需要css+js配合……*/
-@keyframes special_conf_skin {
-    from {
-        clip: rect(1px, auto, auto, auto);
-    }
-    to {
-        clip: rect(0px, auto, auto, auto);
-    }
-}
-
-.special_conf_skin {
-    animation-duration: 0.001s;
-    animation-name: special_conf_skin;
-}
-body.special_conf_skin, body.special_conf_skin .wrap1 {
-    background: initial;
 }

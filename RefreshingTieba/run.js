@@ -323,9 +323,6 @@ function inject(setting, getSpecialModules) {
             case 'ps_cb_ad':
                 target.replaceWith(target.firstChild);
                 break;
-            case 'special_conf_skin':
-                target.classList.remove('special_conf_skin');
-                break;
         }
     }, false);
 }());
