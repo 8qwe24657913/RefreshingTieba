@@ -76,6 +76,7 @@ gift
 sign_card
 conf_skin
 confskin
+marry
 `);
 // 从模板中移除的元素
 var selector = join(`
@@ -132,6 +133,11 @@ function getSpecialModules(noop, emptyStr) {
                 showUIHtml: emptyStr
             },
             "user/widget/icons": {
+                getPreIconHtml: emptyStr,
+                getTbvipIconHtml: emptyStr,
+                getIconsHtml: emptyStr
+            },
+            "user/widget/Icons": {
                 getPreIconHtml: emptyStr,
                 getTbvipIconHtml: emptyStr,
                 getIconsHtml: emptyStr

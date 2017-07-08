@@ -79,6 +79,7 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .card_userinfo_guide,
 .userinfo_username + div[style]:not([class]):not([id]),
 .crowdfunding-traveling-wrapper,
+.userinfo-marry,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
     display: none!important;
