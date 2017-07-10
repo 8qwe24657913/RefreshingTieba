@@ -53,7 +53,6 @@ score
 icon
 localpbtop
 localposter
-interaction
 comtrial
 cpro
 pc2client
@@ -155,15 +154,6 @@ function getSpecialModules(noop, emptyStr) {
             },
             "ihome/widget/MonthIcon": {
                 getMonthIcon: emptyStr
-            },
-            "user/widget/interaction": {
-                _resetDataObj: noop
-            },
-            "puser/widget/Interaction": {
-                _resetDataObj: noop
-            },
-            "ihome/widget/Interaction": {
-                _resetDataObj: noop
             },
             "props/widget/Residual": {
                 showUI: emptyStr
