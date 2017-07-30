@@ -39,9 +39,6 @@ display:none!important，没什么好说的
 ## 免登录看帖
 DOMContentLoaded后再修改PageData.user.is_login，以免导致右上角显示不正常，感谢@榕榕
 ## 禁用flash时防止console刷屏
-贴吧语音会不停地钓鱼PercentLoaded函数检查flash是否加载完成，给个假的PercentLoaded函数骗它加载完成了即可
+贴吧语音会不停地调用PercentLoaded函数检查flash是否加载完成，给个假的PercentLoaded函数骗它加载完成了即可
 ## 减少滚动时的卡顿
 给滚动系列事件监听加上passive属性，不必等到监听函数执行完成后再开始滚动
-
-# 对贴吧使用的建议
-禁用flash，只会影响贴吧提醒、语音贴、音乐和视频，用到它们时点地址栏内右边那个插件图标，选择“运行所有插件（仅限此次）”即可
