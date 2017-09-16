@@ -42,7 +42,6 @@ topicrank
 force_login
 urlcheck
 share
-flashlcs
 icons
 asidead
 platformweal
@@ -76,6 +75,8 @@ sign_card
 conf_skin
 confskin
 marry
+head_recom
+headrecom
 `);
 // 从模板中移除的元素
 var selector = join(`
@@ -94,6 +95,7 @@ var selector = join(`
 #thread_list > li:not(.j_thread_list):not(.thread_top_list_folder)
 #thread_list > style
 .app_download_box
+.activity_head 
 `);
 // bigpipe黑名单，全名
 var bigpipeBlackList = split(`

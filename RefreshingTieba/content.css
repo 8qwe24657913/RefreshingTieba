@@ -9,11 +9,12 @@
 [class*="celebrity"],
 [class*="medal"],
 [class*="tbmall"],
-[class*="vip"]:not(.vip_red),
+[class*="vip"]:not(.vip_red):not(.tm_item_rengong):not(.drl_item_vip),
 [class*="wangmeng"],
 a[href^="http://c.tieba.baidu.com/c/s/download/"],
 a[href="/f?kw=%D3%A6%D3%C3%D6%D0%D0%C4&fr=userbar"],
 [data-daid],
+.xufei,
 .j-placeholder-pay-member,
 #forum_recommend,
 .guidance_fc,
@@ -185,7 +186,7 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     }
 }
 
-.ps_cb {
+.ps_cb, .comforum-swap-words {
     animation-duration: 0.001s;
     animation-name: ps_cb_ad;
     pointer-events: none;
