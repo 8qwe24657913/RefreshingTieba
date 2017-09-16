@@ -44,24 +44,23 @@ function inject(setting, getSpecialModules) {
             if (newProp && newProp !== prop) parent[name] = newProp;
             return;
         }
-        var descriptor = Object.getOwnPropertyDescriptor(parent, name) || {
-            configurable: true,
-            writable: true,
-            enumerable: true
-        };
-        var writable = descriptor.writable;
-        delete descriptor.value;
-        delete descriptor.writable;
-        Object.defineProperty(parent, name, Object.assign({}, descriptor, {
+        var configurable = true, {
+            enumerable = true,
+            writable = true
+        } = Object.getOwnPropertyDescriptor(parent, name) || {};
+        Object.defineProperty(parent, name, {
+            configurable,
+            enumerable,
             get: noop,
-            set: function(e) {
-                delete descriptor.get;
-                delete descriptor.set;
-                descriptor.writable = writable;
-                descriptor.value = filter(e) || e;
-                Object.defineProperty(parent, name, descriptor);
+            set(e) {
+                Object.defineProperty(parent, name, {
+                    configurable,
+                    enumerable,
+                    writable,
+                    value: filter(e) || e
+                });
             }
-        }));
+        });
     }
 
     function hijack(parent, path, filter) {
