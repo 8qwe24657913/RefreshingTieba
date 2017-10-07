@@ -126,7 +126,7 @@ var scriptBlackList = [
     /^https?:\/\/passport\.baidu\.com\/static\/passpc-account\/js\/module\/fingerload\.js(\?|$)/,
 ].map(rule => rule.flags ? [rule.source] : [rule.source, rule.flags]);
 // 屏蔽后需要覆盖原方法的模块
-function getSpecialModules(noop, emptyStr) {
+function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
     'use strict';
     return {
         block: {
@@ -186,6 +186,8 @@ function getSpecialModules(noop, emptyStr) {
             "tbui/widget/js_redirect": {
                 _track: noop
             },
+            "pcommon/widget/AudioPlayer": html5AudioPlayer,
+            "tbui/widget/audio_player": html5AudioPlayer,
         }
     };
 }

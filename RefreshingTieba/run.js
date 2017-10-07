@@ -26,7 +26,127 @@ function inject(setting, getSpecialModules) {
         Object.freeze(noop);
         Object.freeze(emptyStr);
     }
-    var specialModules = getSpecialModules(noop, emptyStr);
+    const html5AudioPlayer = {
+        defaultOptions: {},
+        isReady: false,
+        isPlaying: false,
+        isMute: false,
+        volume: undefined,
+        url: "",
+        initial: function(options) {
+            var that = this;
+            this.options = $.extend(this.defaultOptions, options);
+            this.audio = $('<audio autoplay="false"></audio>').get(0);
+            window.pl = this;
+            this.isReady = true;
+            this.bindEvents();
+            setTimeout(function() {
+                that.trigger("playerloaded", that);
+            }, 0);
+        },
+        onSwfLoaded: noop,
+        renderSwf: emptyStr,
+        bindEvents: function() {
+            this.bind("reset", this._reset, this);
+            this.bind("load", this._load, this);
+            this.bind("play", this._play, this);
+            this.bind("pause", this._pause, this);
+            this.bind("stop", this._stop, this);
+            this.bind("setmute", this._setMute, this);
+        },
+        _reset: function() {
+            this._stop();
+            this.audio.url = this.url = "";
+            this.isPlaying = false;
+        },
+        _load: function(t, url, success, fail) {
+            var that = this;
+            this.url = url;
+            if (this.failHandler) {
+                clearTimeout(this.failHandler);
+            }
+
+            function listener() {
+                that.audio.removeEventListener('canplaythrough', listener, false);
+                that.trigger("songloaded", that._getLoadedPercent());
+                that.failHandler && clearTimeout(that.failHandler);
+                success && success();
+            }
+            this.failHandler = setTimeout(function() {
+                that.audio.removeEventListener('canplaythrough', listener, false);
+                if (fail) {
+                    fail();
+                }
+            }, 5E3);
+            this.audio.addEventListener('canplaythrough', listener, false);
+            this.audio.src = url;
+        },
+        _play: function(t, updateTotal, updateTime, finish) {
+            var that = this;
+            if (!this.isPlaying) {
+                var totalTime = this.audio.duration * 1000;
+                this.audio.play();
+                if (this.checkFinishedHandler) {
+                    clearTimeout(this.checkFinishedHandler);
+                }
+                this.isPlaying = true;
+                if (updateTotal) {
+                    updateTotal({
+                        totalTime: totalTime
+                    });
+                }
+                this.checkFinishedHandler = setTimeout(function getTime() {
+                    var currentTime = that.audio.currentTime * 1000;
+                    var percent = currentTime / totalTime;
+                    updateTime && updateTime({
+                        percent: percent,
+                        totalTime: totalTime,
+                        currentTime: currentTime
+                    });
+                    if (that.audio.ended) {
+                        that.trigger("playfinish", 1);
+                        finish && finish();
+                    } else {
+                        setTimeout(getTime, 500)
+                    }
+                }, 1E3);
+            }
+        },
+        _pause: function() {
+            if (this.isPlaying) {
+                this.audio.pause();
+                this.isPlaying = false;
+            }
+        },
+        _stop: function() {
+            this.audio.pause();
+            if (this.checkFinishedHandler) {
+                clearTimeout(this.checkFinishedHandler);
+            }
+            this.isPlaying = false;
+        },
+        _setMute: function(t, isMute) {
+            this.audio.muted = this.isMute = isMute;
+        },
+        _setVolume: function(t, volume) {
+            this.volume = volume;
+            this.audio.volume = volume / 100;
+        },
+        _setCurrentPosition: function() {},
+        _getCurrentPosition: function() {
+            return this.audio.currentTime / this.audio.duration;
+        },
+        _getLoadedPercent: function() {
+            return this.audio.buffered.end(this.audio.buffered.length - 1) / this.audio.duration;
+        },
+        _getTotalTime: function() {
+            return this.audio.duration * 1000;
+        },
+        _getCurrentTime: function() {
+            return this.audio.currentTime * 1000;
+        }
+    };
+    var specialModules = getSpecialModules(noop, emptyStr, html5AudioPlayer);
     // Logging
     var log;
     console.info('[清爽贴吧]正在运行中');
