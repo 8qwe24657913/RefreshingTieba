@@ -120,6 +120,11 @@ puser/widget/ticketWarning
 fanclub/widget/fan_aside
 pfrs/widget/frs_stamp_notice
 `);
+var scriptBlackList = [
+    /^https?:\/\/fex\.bdstatic\.com\/hunter\/alog\/(alog|dp)\.min\.js(\?|$)/,
+    /^https?:\/\/passport\.baidu\.com\/static\/passpc-base\/js\/(dv\/8|ld|fld)\.min\.js(\?|$)/,
+    /^https?:\/\/passport\.baidu\.com\/static\/passpc-account\/js\/module\/fingerload\.js(\?|$)/,
+].map(rule => rule.flags ? [rule.source] : [rule.source, rule.flags]);
 // 屏蔽后需要覆盖原方法的模块
 function getSpecialModules(noop, emptyStr) {
     'use strict';
@@ -178,6 +183,9 @@ function getSpecialModules(noop, emptyStr) {
             "puser/widget/sign_mod_bright": {
                 handlePrintFlower: noop
             },
+            "tbui/widget/js_redirect": {
+                _track: noop
+            },
         }
     };
 }
@@ -189,6 +197,7 @@ var setting = {
     bigpipeBlackList,
     moduleWhiteList,
     moduleBlackList,
+    scriptBlackList,
 };
 
 function orig(wtf) {

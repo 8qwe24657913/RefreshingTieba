@@ -104,7 +104,8 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .l_post[data-field^="{\"author\":{\"user_id\":2851617777,"], /*秋名山第一名*/
 .l_post[data-field^="{\"author\":{\"user_id\":2851617779,"], /*贴吧小哥哥*/
 .l_post[data-field^="{\"author\":{\"user_id\":2852576200,"], /*天下大大稽*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617776,"] /*鸡年大财神*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617776,"], /*鸡年大财神*/
+.l_post:not([data-field]) /*广告*/
 {
     display: none!important;
 }

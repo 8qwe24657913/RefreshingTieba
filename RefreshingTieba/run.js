@@ -9,7 +9,10 @@ function inject(setting, getSpecialModules) {
         bigpipeBlackList,
         moduleWhiteList,
         moduleBlackList,
+        scriptBlackList,
     } = setting;
+
+    scriptBlackList = scriptBlackList.map(rule => new RegExp(...rule));
 
     function createNoop() {
         return function() {};
@@ -243,6 +246,10 @@ function inject(setting, getSpecialModules) {
     // 统计过滤
     setNoop(window, 'alog');
     setNoop(window, 'passFingerload');
+    hijack(window, 'PageLink', function(PageLink) {
+        setNoop(PageLink, 'init');
+        setNoop(PageLink, '_onclick');
+    });
     hijack(window, '$', function($) {
         hijack($, 'stats', function(stats) {
             for (let name of ['hive', 'processTag', 'scanPage', 'sendRequest', 'track', 'redirect']) {
@@ -278,6 +285,15 @@ function inject(setting, getSpecialModules) {
                 return is_login;
             }
         });
+    });
+    // 阻止特定脚本动态加载
+    let originalSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+    Object.defineProperty(HTMLScriptElement.prototype, 'src', {
+        ...originalSrc,
+        set(src) {
+            for (let rule of scriptBlackList) if (rule.test(src)) return debugMode && log('Blocked script: ' + src);
+            originalSrc.set.call(this, src);
+        }
     });
     hijack(EventTarget, 'prototype', function(prototype) { // 滚动速度提升
         var eventTypes = 'wheel,mousewheel,DOMMouseScroll,MozMousePixelScroll,scroll,touchstart,touchmove,touchend,touchcancel,mousemove'.split(',');
