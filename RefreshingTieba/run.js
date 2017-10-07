@@ -26,15 +26,15 @@ function inject(setting, getSpecialModules) {
     var specialModules = getSpecialModules(noop, emptyStr);
     // Logging
     var log;
-    console.info('清爽贴吧正在运行中');
+    console.info('[清爽贴吧]正在运行中');
     if (debugMode) {
         var arr = [],
             arr2 = [];
         log = function(txt) {
             arr.push(txt);
         };
-        console.info('被过滤的模块:', arr);
-        console.info('被放行的模块:', arr2);
+        console.info('[清爽贴吧]过滤的模块:', arr);
+        console.info('[清爽贴吧]放行的模块:', arr2);
     }
     // 劫持用
     function hijackOnce(parent, name, filter) {
@@ -44,10 +44,11 @@ function inject(setting, getSpecialModules) {
             if (newProp && newProp !== prop) parent[name] = newProp;
             return;
         }
-        var configurable = true, {
-            enumerable = true,
-            writable = true
-        } = Object.getOwnPropertyDescriptor(parent, name) || {};
+        var configurable = true,
+            {
+                enumerable = true,
+                writable = true
+            } = Object.getOwnPropertyDescriptor(parent, name) || {};
         Object.defineProperty(parent, name, {
             configurable,
             enumerable,
@@ -180,7 +181,7 @@ function inject(setting, getSpecialModules) {
                     get(target, property, receiver) {
                         if (property in target) return target[property];
                         //debugger;
-                        console.warn('Undefined property:', path, property, defined[path], target);
+                        console.warn('[清爽贴吧]Undefined property:', path, property, defined[path], target);
                         return function() {
                             //debugger;
                         };
@@ -221,7 +222,7 @@ function inject(setting, getSpecialModules) {
                         info.requires = undefined;
                     }
                 } else {
-                    console.warn('贴吧精简脚本遇到问题：未知的requires字段', info);
+                    console.warn('[清爽贴吧]遇到问题：未知的requires字段', info);
                 }
             }
             var sub2 = specialModules.override[info.path];
@@ -230,29 +231,6 @@ function inject(setting, getSpecialModules) {
             if (debugMode) arr2.push(info.path);
             return _define.call(Module, info);
         };
-    });
-    // Fxck PercentLoaded
-    Object.defineProperties(HTMLEmbedElement.prototype, {
-        PercentLoaded: {
-            configurable: true,
-            enumerable: false,
-            value() {
-                return 100;
-            },
-            writable: true
-        },
-        getData: {
-            configurable: true,
-            enumerable: false,
-            value: noop,
-            writable: true
-        },
-        setData: {
-            configurable: true,
-            enumerable: false,
-            value: noop,
-            writable: true
-        }
     });
 
     function setNoop(parent, name) {
@@ -264,9 +242,24 @@ function inject(setting, getSpecialModules) {
     }
     // 统计过滤
     setNoop(window, 'alog');
-    hijack(window, '$.stats', function(stats) {
-        ['hive', 'processTag', 'scanPage', 'sendRequest', 'track', 'redirect'].forEach(function(name) {
-            setNoop(stats, name);
+    setNoop(window, 'passFingerload');
+    hijack(window, '$', function($) {
+        hijack($, 'stats', function(stats) {
+            for (let name of ['hive', 'processTag', 'scanPage', 'sendRequest', 'track', 'redirect']) {
+                setNoop(stats, name);
+            }
+        });
+        // 允许关闭对话框
+        hijack($, 'dialog', function(Dialog) {
+            return class ForceCloseableDialog extends Dialog {
+                constructor(config) {
+                    if (config.closeable === false) {
+                        //config.closeable = true;
+                        console.log("[清爽贴吧]已允许关闭对话框：", config);
+                    }
+                    super(config);
+                }
+            };
         });
     });
     // 免登录看帖
@@ -321,6 +314,9 @@ function inject(setting, getSpecialModules) {
         switch (event.animationName) {
             case 'ps_cb_ad':
                 target.replaceWith(target.firstChild);
+                break;
+            case 'temp_fix':
+                target.appendChild(document.createElement('div'));
                 break;
         }
     }, false);

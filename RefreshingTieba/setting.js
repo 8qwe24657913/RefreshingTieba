@@ -42,7 +42,6 @@ topicrank
 force_login
 urlcheck
 share
-icons
 asidead
 platformweal
 headrecom

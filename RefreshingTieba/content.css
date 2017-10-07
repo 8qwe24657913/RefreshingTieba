@@ -158,6 +158,9 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
 .tbui_aside_float_bar li.tbui_fbar_post {
     margin-bottom: 5px!important;
 }
+.dialogJmodal {
+    position: fixed!important;
+}
 
 
 
@@ -189,5 +192,21 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
 .ps_cb, .comforum-swap-words {
     animation-duration: 0.001s;
     animation-name: ps_cb_ad;
+    pointer-events: none;
+}
+
+/* wtf??? */
+@keyframes temp_fix {
+    from {
+        clip: rect(1px, auto, auto, auto);
+    }
+    to {
+        clip: rect(0px, auto, auto, auto);
+    }
+}
+
+#com_userbar .u_setting:empty {
+    animation-duration: 0.001s;
+    animation-name: temp_fix;
     pointer-events: none;
 }
