@@ -56,7 +56,7 @@ function inject(setting, getSpecialModules) {
         },
         _reset: function() {
             this._stop();
-            this.audio.url = this.url = "";
+            this.audio.src = this.url = "";
             this.isPlaying = false;
         },
         _load: function(t, url, success, fail) {
@@ -79,6 +79,7 @@ function inject(setting, getSpecialModules) {
                 }
             }, 5E3);
             this.audio.addEventListener('canplaythrough', listener, false);
+            console.log('[清爽贴吧]播放语音: ', url);
             this.audio.src = url;
         },
         _play: function(t, updateTotal, updateTime, finish) {
