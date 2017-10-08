@@ -382,7 +382,7 @@ function inject(setting, getSpecialModules) {
             return class ForceCloseableDialog extends Dialog {
                 constructor(config) {
                     if (config.closeable === false) {
-                        //config.closeable = true;
+                        config.closeable = true;
                         console.log("[清爽贴吧]已允许关闭对话框：", config);
                     }
                     super(config);
