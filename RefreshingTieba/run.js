@@ -12,7 +12,7 @@ function inject(setting, getSpecialModules) {
         scriptBlackList,
     } = setting;
 
-    scriptBlackList = scriptBlackList.map(rule => new RegExp(...rule));
+    scriptBlackList = scriptBlackList.map(rule => new RegExp(rule));
 
     function createNoop() {
         return function() {};

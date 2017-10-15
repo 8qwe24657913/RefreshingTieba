@@ -76,6 +76,9 @@ confskin
 marry
 head_recom
 headrecom
+P0WRqyv
+lego
+pvFromClient
 `);
 // 从模板中移除的元素
 var selector = join(`
@@ -120,11 +123,54 @@ puser/widget/ticketWarning
 fanclub/widget/fan_aside
 pfrs/widget/frs_stamp_notice
 `);
+var HOSTMAP = {
+    "codemonkey.baidu.com": "https://sp1.baidu.com/9bkCaTOb_gsJiBGko9WTAnF6hhy",
+    "g.imgsrc.baidu.com": "https://ss0.bdstatic.com/-fo4cT78BgN3otqbppnN2DJv",
+    "c.imgsrc.baidu.com": "https://ss0.bdstatic.com/9fo4cT78BgN3otqbppnN2DJv",
+    "wbapi.baidu.com": "https://sp2.baidu.com/6bYHfD4a2gU2pMbgoY3K",
+    "gx.baidu.com": "https://sp0.baidu.com/-ax1bjeh1BF3odCf",
+    "f.hiphotos.baidu.com": "https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy",
+    "ecmc.bdimg.com": "https://ss2.bdstatic.com/-0U0b8Sm1A5BphGlnYG",
+    "f.imgsrc.baidu.com": "https://ss0.bdstatic.com/-vo4cT78BgN3otqbppnN2DJv",
+    "s1.bdstatic.com": "https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K",
+    "e.hiphotos.baidu.com": "https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy",
+    "g.hiphotos.baidu.com": "https://ss3.baidu.com/-fo3dSag_xI4khGko9WTAnF6hhy",
+    "h.hiphotos.baidu.com": "https://ss0.baidu.com/7Po3dSag_xI4khGko9WTAnF6hhy",
+    "b.imgsrc.baidu.com": "https://ss0.bdstatic.com/9vo4cT78BgN3otqbppnN2DJv",
+    "c.hiphotos.baidu.com": "https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy",
+    "ecma.bdimg.com": "https://ss1.bdstatic.com/-0U0bXSm1A5BphGlnYG",
+    "d.hiphotos.baidu.com": "https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy",
+    "b.hiphotos.baidu.com": "https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy",
+    "a.hiphotos.baidu.com": "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy",
+    "wpl.baidu.com": "https://sp2.baidu.com/6aQ_sjip0QIZ8tyhnq",
+    "e.imgsrc.baidu.com": "https://ss0.bdstatic.com/-4o4cT78BgN3otqbppnN2DJv",
+    "d.hiphotos.bdimg.com": "https://ss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy",
+    "bos.lego.baidu.com": "https://ss0.baidu.com/9rkZsjKl1wd3otqbppnN2DJv",
+    "e.hiphotos.bdimg.com": "https://ss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy",
+    "f.hiphotos.bdimg.com": "https://ss1.bdstatic.com/-vo3dSag_xI4khGkpoWK1HF6hhy",
+    "map.baidu.com": "https://sp1.baidu.com/80MWsjip0QIZ8tyhnq",
+    "ecmd.bdimg.com": "https://ss0.bdstatic.com/-0U0aHSm1A5BphGlnYG",
+    "a.imgsrc.baidu.com": "https://ss0.bdstatic.com/94o4cT78BgN3otqbppnN2DJv",
+    "muses.baidu.com": "https://sp0.baidu.com/8_1ZaSna2gU2pMbgoY3K",
+    "d.imgsrc.baidu.com": "https://ss0.bdstatic.com/-Po4cT78BgN3otqbppnN2DJv",
+    "j.map.baidu.com": "https://sp0.baidu.com/7vo0bSba2gU2pMbgoY3K",
+    "api.map.baidu.com": "https://sp2.baidu.com/9_Q4sjOpB1gCo2Kml5_Y_D3",
+    "bdimg.share.baidu.com": "https://ss1.baidu.com/9rA4cT8aBw9FktbgoI7O1ygwehsv",
+    "b.hiphotos.bdimg.com": "https://ss1.bdstatic.com/9vo3dSag_xI4khGkpoWK1HF6hhy",
+    "h.imgsrc.baidu.com": "https://ss0.bdstatic.com/7Po4cT78BgN3otqbppnN2DJv",
+    "g.hiphotos.bdimg.com": "https://ss2.bdstatic.com/-fo3dSag_xI4khGkpoWK1HF6hhy",
+    "h.hiphotos.bdimg.com": "https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy",
+    "c.hiphotos.bdimg.com": "https://ss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy",
+    "a.hiphotos.bdimg.com": "https://ss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy",
+    "bzclk.baidu.com": "https://sp0.baidu.com/9q9JcDHa2gU2pMbgoY3K",
+    "ecmb.bdimg.com": "https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG",
+};
 var scriptBlackList = [
-    /^https?:\/\/fex\.bdstatic\.com\/hunter\/alog\/(alog|dp)\.min\.js(\?|$)/,
-    /^https?:\/\/passport\.baidu\.com\/static\/passpc-base\/js\/(dv\/8|ld|fld)\.min\.js(\?|$)/,
-    /^https?:\/\/passport\.baidu\.com\/static\/passpc-account\/js\/module\/fingerload\.js(\?|$)/,
-].map(rule => rule.flags ? [rule.source] : [rule.source, rule.flags]);
+    'fex.bdstatic.com/hunter/alog/',
+    'passport.baidu.com/static/passpc-base/js/(dv/8|ld|fld).min.js(\\?|$)',
+    'passport.baidu.com/static/passpc-account/js/module/fingerload.js(\\?|$)',
+    '(' + [...Object.entries(HOSTMAP)].reduce((prev, [http, https]) => prev.concat([http, https.slice(8)]), []).join('|') + ')/',
+].map(rule => ('^https?://' + rule).replace(/(\.|\/)/g, '\\$1'));
 // 屏蔽后需要覆盖原方法的模块
 function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
     'use strict';
