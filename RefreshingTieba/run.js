@@ -287,7 +287,7 @@ function inject(setting, getSpecialModules) {
     // 模块过滤
     hijack(window, '_.Module', function(Module) {
         function check(module) { // 放行返回true
-            if (moduleBlackList.includes(module) || hasSensitiveWords(module) && !moduleWhiteList.includes(module)) {
+            if (moduleBlackList.includes(module) || hasSensitiveWords(module) && !moduleWhiteList.includes(module) || specialModules.block[module]) {
                 if (debugMode) log('Blocked module: ' + module);
                 return false;
             }
@@ -349,6 +349,7 @@ function inject(setting, getSpecialModules) {
                     console.warn('[清爽贴吧]遇到问题：未知的requires字段', info);
                 }
             }
+            if (specialModules.hook[info.path]) specialModules.hook[info.path](info);
             var sub2 = specialModules.override[info.path];
             if (sub2) Object.assign(info.sub, sub2);
             defined[info.path] = 1;

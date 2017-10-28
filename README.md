@@ -2,17 +2,18 @@
 过滤贴吧的各种广告、无用的脚本和样式，提升加载速度，减少内存占用，附带免登录看帖，语音贴替换为html5播放等功能
 
 # 如何安装
-法一：
-> 下载[RefreshingTieba.crx](https://github.com/8qwe24657913/RefreshingTieba/raw/master/RefreshingTieba.crx)，打开chrome://extensions/，拖入安装
 
-法二：
+法一：
 > 下载RefreshingTieba文件夹，用开发者模式加载
+
+法二 **不推荐，该方法安装的扩展被Chrome  Dev 64.0.3251.0视作已损坏，尚未查明是否是BUG**：
+> 下载[RefreshingTieba.crx](https://github.com/8qwe24657913/RefreshingTieba/raw/master/RefreshingTieba.crx)，打开chrome://extensions/，拖入安装
 
 ### 如何屏蔽启动时的停用提示：
 
-法一需要[下载chrome.adm](https://support.google.com/chrome/a/answer/187202)，打开gpedit.msc，计算机配置 -> 管理模板 -> 经典管理模版(ADM) -> Google -> Google Chrome -> 扩展程序，在“配置扩展程序安装白名单”中选择“已启用”，加入本扩展id：eclkpbdcooadmnmfcjblaalkegmemibi
+法一需要添加启动参数--enable-automation --disable-infobars
 
-法二需要添加启动参数--enable-automation --disable-infobars
+法二需要[下载chrome.adm](https://support.google.com/chrome/a/answer/187202)，打开gpedit.msc，计算机配置 -> 管理模板 -> 经典管理模版(ADM) -> Google -> Google Chrome -> 扩展程序，在“配置扩展程序安装白名单”中选择“已启用”，加入本扩展id：eclkpbdcooadmnmfcjblaalkegmemibi
 
 # 做了什么
 * 减少不必要的js、css加载

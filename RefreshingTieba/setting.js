@@ -97,7 +97,7 @@ var selector = join(`
 #thread_list > li:not(.j_thread_list):not(.thread_top_list_folder)
 #thread_list > style
 .app_download_box
-.activity_head 
+.activity_head
 `);
 // bigpipe黑名单，全名
 var bigpipeBlackList = split(`
@@ -221,6 +221,9 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                     return 0;
                 }
             },
+            "pcommon/widget/AudioPlayer": html5AudioPlayer,
+            "tbui/widget/audio_player": html5AudioPlayer,
+            "common/widget/AudioPlayer": html5AudioPlayer,
         },
         override: {
             "frs-list/pagelet/thread_list": {
@@ -232,8 +235,21 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
             "tbui/widget/js_redirect": {
                 _track: noop
             },
-            "pcommon/widget/AudioPlayer": html5AudioPlayer,
-            "tbui/widget/audio_player": html5AudioPlayer,
+        },
+        hook: {
+            /*
+            "message/widget/chat_content": function(info) {
+                if (!info.requires) info.requires = [];
+                info.requires.push("common/widget/TbLcs");
+                let initial = info.sub.initial;
+                info.sub.initial = function(config) {
+                    if (!config.lcs.sendMessage) {
+                        config.lcs = this.requireInstance("common/widget/TbLcs", []);
+                    }
+                    return initial.call(this, config);
+                }
+            }
+            */
         }
     };
 }
