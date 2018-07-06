@@ -79,6 +79,7 @@ headrecom
 P0WRqyv
 lego
 pvFromClient
+app_download
 `);
 // 从模板中移除的元素
 var selector = join(`
@@ -98,10 +99,12 @@ var selector = join(`
 #thread_list > style
 .app_download_box
 .activity_head
+.nani_app_download_box
 `);
 // bigpipe黑名单，全名
 var bigpipeBlackList = split(`
 frs-aside/pagelet/ad
+frs-aside/pagelet/search_back
 `);
 // bigpipe白名单，全名
 var bigpipeWhiteList = split(`
@@ -122,6 +125,8 @@ ppb/widget/specialAutoFocus
 puser/widget/ticketWarning
 fanclub/widget/fan_aside
 pfrs/widget/frs_stamp_notice
+frs-aside/widget/search_back
+frs-footer/widget/frs_from_guide
 `);
 var HOSTMAP = {
     "codemonkey.baidu.com": "https://sp1.baidu.com/9bkCaTOb_gsJiBGko9WTAnF6hhy",
@@ -234,6 +239,23 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
             },
             "tbui/widget/js_redirect": {
                 _track: noop
+            },
+            "tbui/widget/aside_float_bar": {
+                _square: noop,
+                _bottle: noop,
+                _nobottle: noop,
+                _radar: noop,
+                _tsukkomi: noop,
+                _home: noop,
+                _down: noop,
+                bottleBubble: noop,
+            },
+            "pcommon/widget/AsideFloatBar": {
+                _square: noop,
+                _radar: noop,
+                _tsukkomi: noop,
+                _props: noop,
+                _down: noop,
             },
         },
         hook: {
