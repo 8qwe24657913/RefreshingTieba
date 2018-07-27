@@ -21,9 +21,7 @@
 
 ## [可选]订阅ABP规则
 
-洁癖所使用的 ABP 规则，阻止加载一些本扩展只能隐藏的广告
-
-ABP用户可[点击订阅](abp:subscribe?location=https://github.com/8qwe24657913/RefreshingTieba/raw/master/ABP_List.txt&title=Refreshing%20Tieba's%20Additional%20List) 其它屏蔽广告扩展用户请手动订阅[此规则](https://github.com/8qwe24657913/RefreshingTieba/raw/master/ABP_List.txt)
+[洁癖所使用的 ABP 规则](https://github.com/8qwe24657913/RefreshingTieba/raw/master/ABP_List.txt)，阻止加载一些本扩展只能隐藏的广告，由于 Github 所限只能手动添加订阅
 
 # 做了什么
 * 减少不必要的js、css加载
