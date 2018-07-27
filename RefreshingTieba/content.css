@@ -19,6 +19,7 @@ a[href="/f?kw=%D3%A6%D3%C3%D6%D0%D0%C4&fr=userbar"],
 #forum_recommend,
 .guidance_fc,
 .content-ad,
+#aside_ad,
 #j_p_postlist > div[class="l_post l_post_bright j_l_post clearfix  "] + div:not([class="l_post l_post_bright j_l_post clearfix  "]),
 .l_post[data-isautoreply],
 .post_bubble_top,
@@ -90,6 +91,7 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .crowdfunding-traveling-wrapper,
 .userinfo-marry,
 #banner_pb_customize,
+.post-foot-send-gift-container,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
     display: none!important;
@@ -124,6 +126,15 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 
 .post_bubble_middle {
     background: none!important;
+    padding: 0!important;
+    width: auto!important;
+    overflow: auto!important;
+}
+.post_bubble_middle_inner {
+    background: none!important;
+    padding: 0!important;
+    width: auto!important;
+    overflow: auto!important;
 }
 
 html .red_text,
@@ -158,6 +169,10 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     color: inherit!important;
 }
 
+.official_head .head_banner {
+    cursor: auto!important;
+}
+
 
 /*奇怪的样式修复*/
 
@@ -189,6 +204,25 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
 }
 
 
+
+/*需要移除的元素*/
+@keyframes ads_need_remove {
+    from {
+        clip: rect(1px, auto, auto, auto);
+    }
+    to {
+        clip: rect(0px, auto, auto, auto);
+    }
+}
+
+.app_forum_top_nav {
+    display: block!important;
+    visibility: hidden!important;
+    animation-duration: 0.001s;
+    animation-name: ads_need_remove;
+    pointer-events: none;
+}
+
 /*帖子内关键词链接广告*/
 @keyframes ps_cb_ad {
     from {
@@ -205,8 +239,9 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     pointer-events: none;
 }
 
-/* wtf??? */
-@keyframes temp_fix {
+
+/*辣鸡彩色字*/
+@keyframes colorful_idiots {
     from {
         clip: rect(1px, auto, auto, auto);
     }
@@ -215,8 +250,22 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     }
 }
 
-#com_userbar .u_setting:empty {
+.post_props_colorful {
     animation-duration: 0.001s;
-    animation-name: temp_fix;
-    pointer-events: none;
+    animation-name: colorful_idiots;
+}
+
+/*防患未然的广告处理*/
+@keyframes ad_bottom_view {
+    from {
+        clip: rect(1px, auto, auto, auto);
+    }
+    to {
+        clip: rect(0px, auto, auto, auto);
+    }
+}
+
+.ad_bottom_view {
+    animation-duration: 0.001s;
+    animation-name: ad_bottom_view;
 }

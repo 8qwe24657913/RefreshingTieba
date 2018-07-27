@@ -1,10 +1,13 @@
 /*jshint esversion: 6 */
 // 是否开启debug模式
-var debugMode = false;
+let debugMode = false;
 // 通用模糊匹配，包含这个词就屏蔽
-var sensitiveWords = split(`
+let sensitiveWordsV2 = split(`
+share
+tbshare
 encourage
 entertainment
+hot_topic
 hottopic
 firework
 adsense
@@ -29,34 +32,34 @@ u9aside
 duoku
 xiu8
 meizhi
-adpost
+ad_post
 advertise
 recommend
 props
+snow_flow
 snowflow
-saveface
+save_face
 medal
-pkfixedbubble
+pk_fixed_bubble
 locality
-topicrank
+topic_rank
 force_login
-urlcheck
-share
+url_check
 asidead
-platformweal
-headrecom
+aside_ad
+platform_weal
+head_recom
 spreadad
-asidead
 score
 icon
-localpbtop
-localposter
+local_pb_top
+local_poster
 comtrial
 cpro
 pc2client
-tenyears
+ten_years
 pad_overlay
-spageliveshowslide
+spage_liveshow_slide
 aside_platform
 avideo
 tb_gram
@@ -72,17 +75,27 @@ nameplate
 gift
 sign_card
 conf_skin
-confskin
 marry
 head_recom
-headrecom
 P0WRqyv
 lego
-pvFromClient
+pv_from_client
 app_download
+icons
+payment
+paykey
+paypost
+stats
+padsense
+umoney
+yunying
+popup_zhang
+app_forum_top_nav
+fixed_bar
 `);
+
 // 从模板中移除的元素
-var selector = join(`
+let selector = join(`
 [id="pagelet_frs-aside/pagelet/ad"]
 [id*="encourage"]
 [id*="entertainment"]
@@ -100,21 +113,22 @@ var selector = join(`
 .app_download_box
 .activity_head
 .nani_app_download_box
+.brank_ad_wap
+.brank_desc_wrap
 `);
 // bigpipe黑名单，全名
-var bigpipeBlackList = split(`
+let bigpipeBlackList = split(`
 frs-aside/pagelet/ad
 frs-aside/pagelet/search_back
 `);
 // bigpipe白名单，全名
-var bigpipeWhiteList = split(`
+let bigpipeWhiteList = split(`
 `);
 // module白名单，全名
-var moduleWhiteList = split(`
-album/component/initApiConfig
+let moduleWhiteList = split(`
 `);
 // module黑名单，全名
-var moduleBlackList = split(`
+let moduleBlackList = split(`
 ueditor/widget/topic_suggestion
 puser/widget/myApp
 fanclub/widget/fancard
@@ -127,8 +141,9 @@ fanclub/widget/fan_aside
 pfrs/widget/frs_stamp_notice
 frs-aside/widget/search_back
 frs-footer/widget/frs_from_guide
+frs-header/widget/brankForumCard
 `);
-var HOSTMAP = {
+let HOSTMAP = {
     "codemonkey.baidu.com": "https://sp1.baidu.com/9bkCaTOb_gsJiBGko9WTAnF6hhy",
     "g.imgsrc.baidu.com": "https://ss0.bdstatic.com/-fo4cT78BgN3otqbppnN2DJv",
     "c.imgsrc.baidu.com": "https://ss0.bdstatic.com/9fo4cT78BgN3otqbppnN2DJv",
@@ -170,10 +185,13 @@ var HOSTMAP = {
     "bzclk.baidu.com": "https://sp0.baidu.com/9q9JcDHa2gU2pMbgoY3K",
     "ecmb.bdimg.com": "https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG",
 };
-var scriptBlackList = [
+let scriptBlackList = [
     'fex.bdstatic.com/hunter/alog/',
     'passport.baidu.com/static/passpc-base/js/(dv/8|ld|fld).min.js(\\?|$)',
     'passport.baidu.com/static/passpc-account/js/module/fingerload.js(\\?|$)',
+    'hm.baidu.com/',
+    'img.baidu.com/hunter/',
+    'xiangce.baidu.com/public_home/api/checkshow\\?', // 一个根本不存在的API……
     '(' + [...Object.entries(HOSTMAP)].reduce((prev, [http, https]) => prev.concat([http, https.slice(8)]), []).join('|') + ')/',
 ].map(rule => ('^https?://' + rule).replace(/(\.|\/)/g, '\\$1'));
 // 屏蔽后需要覆盖原方法的模块
@@ -257,6 +275,14 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                 _props: noop,
                 _down: noop,
             },
+            "common/widget/AsideFloatBar": {
+                _square: noop,
+                _radar: noop,
+                _tsukkomi: noop,
+                _home: noop,
+                _props: noop,
+                _down: noop,
+            },
         },
         hook: {
             /*
@@ -269,15 +295,15 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                         config.lcs = this.requireInstance("common/widget/TbLcs", []);
                     }
                     return initial.call(this, config);
-                }
+                };
             }
             */
         }
     };
 }
-var setting = {
+let setting = {
     debugMode,
-    sensitiveWords,
+    sensitiveWordsV2,
     selector,
     bigpipeWhiteList,
     bigpipeBlackList,
