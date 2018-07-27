@@ -236,8 +236,6 @@ function inject(setting, getSpecialModules, toFastProperties) {
         let Pagelet = Bigpipe.Pagelet;
         Bigpipe.debug(false);
         toFastProperties(Bigpipe);
-        let range = document.createRange();
-        range.selectNodeContents(document.documentElement);
         Pagelet.prototype._getHTML = function() { // 略微提高性能
             let html, elem;
             if ("undefined" !== typeof this.content) { // 钦定了this.content
@@ -265,9 +263,10 @@ function inject(setting, getSpecialModules, toFastProperties) {
             while (child = elem.firstChild) temp.appendChild(child);
             if (!clearId) clearId = setTimeout(cleaner, 50);
         }
-        let LOADED = 1;
+        let template = document.createElement('template');
         Pagelet.prototype._appendTo = function(pagelet) {
             if (!(pagelet instanceof Pagelet)) throw new TypeError(pagelet + "is not a pagelet.");
+            const LOADED = 1;
             if (this.state >= LOADED) throw new Error("pagelet[" + this.id + "] is already mounted");
             let content = this._getHTML();
             if (content !== false) {
@@ -276,18 +275,25 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 if (!doc) throw new Error("Cannot find the placeholder for pagelet[" + this.id + "]");
                 empty(doc); // 清空doc
                 if (content) {
-                    let fragment = range.createContextualFragment(content),
-                        list = fragment.querySelectorAll(selector), // NodeList is immutable
-                        l = list.length;
-                    while (l--) {
-                        let elem = list[l];
+                    template.innerHTML = content; // fix: range.createContextualFragment() will load the resources unexpectedly
+                    let fragment = template.content;
+                    for (let elem of fragment.querySelectorAll(selector)) { // NodeList is immutable
                         elem.remove();
                         debugMode && logBlocked('element', elem);
                     }
+                    let scripts = fragment.querySelectorAll('script'); // NodeList is immutable
                     doc.appendChild(fragment);
+                    for (let script of scripts) { // imperfect fix: <script> doesn't work
+                        let replacement = document.createElement('script');
+                        for (let attr of script.attributes) {
+                            replacement.attributes.setNamedItem(attr.cloneNode());
+                        }
+                        if (script.firstChild) replacement.appendChild(script.firstChild);
+                        script.replaceWith(replacement);
+                    }
                 }
             }
-            return this
+            return this;
         };
     });
     // 模块过滤

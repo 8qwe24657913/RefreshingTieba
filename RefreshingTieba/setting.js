@@ -92,6 +92,7 @@ yunying
 popup_zhang
 app_forum_top_nav
 fixed_bar
+brank_ad
 `);
 
 // 从模板中移除的元素
@@ -111,6 +112,7 @@ let selector = join(`
 #thread_list > li:not(.j_thread_list):not(.thread_top_list_folder)
 #thread_list > style
 .app_download_box
+.app_download_wrap
 .activity_head
 .nani_app_download_box
 .brank_ad_wap
@@ -192,6 +194,7 @@ let scriptBlackList = [
     'hm.baidu.com/',
     'img.baidu.com/hunter/',
     'xiangce.baidu.com/public_home/api/checkshow\\?', // 一个根本不存在的API……
+    'tb1.bdstatic.com/tb/cms/(itieba/oftenforum_jsdata|ofjsdata).js(\\?|$)',
     '(' + [...Object.entries(HOSTMAP)].reduce((prev, [http, https]) => prev.concat([http, https.slice(8)]), []).join('|') + ')/',
 ].map(rule => ('^https?://' + rule).replace(/(\.|\/)/g, '\\$1'));
 // 屏蔽后需要覆盖原方法的模块
@@ -282,6 +285,9 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                 _home: noop,
                 _props: noop,
                 _down: noop,
+            },
+            "tbui/widget/http_transform": {
+                httpLinkHover: noop,
             },
         },
         hook: {

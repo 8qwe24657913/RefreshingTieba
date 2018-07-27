@@ -1,2 +1,5 @@
-
+.gitignore
 *.pem
+build.bat
+addVersionAndChecksum.py
+ABP_List_source.txt

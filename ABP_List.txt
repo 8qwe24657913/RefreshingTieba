@@ -1,0 +1,26 @@
+[Adblock Plus 2.0]
+! Checksum: azxZo88yOX0XhLiuTcCCrg
+! Version: 20180727235637
+! Title: Refreshing Tieba's Additional List
+! Expires: 10 days
+! Homepage: https://github.com/8qwe24657913/RefreshingTieba
+
+! fix for CJX's EasyList Lite
+@@||tb1.bdstatic.com/??*/advertise_*$script,stylesheet
+! fix for ... I don't know, it seems already fixed so comment it
+! ||tieba.baidu.com/pmc/recycle#@#.ui_bubble_down
+
+! block resources
+||tb1.bdstatic.com/tb/cms/ngmis/file_1483927579063.html
+||tblcs.baidu.com
+||bcebos.com
+||bj.bcebos.com
+||cpro.baidustatic.com
+||entry.baidu.com
+https://gss0.baidu.com/6qVSsjikBxIFlNKl8IuM_a/open/api/front2.js
+/^https?://tb1\.bdstatic\.com\/\?\?\/tb\/_\/fixed_bar_\w+\.js$/
+||tb1.bdstatic.com/tb/cms/PC%E7%AB%AF%E5%BA%95%E9%83%A8%E9%80%9A%E6%A0%8F%E5%BC%B9%E5%B1%821000x120.png
+https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/tam-ogel/c47a8468f4612f66133a86f0fe01a38c_980_90.jpg
+http://ecmb.bdimg.com/tam-ogel/c47a8468f4612f66133a86f0fe01a38c_980_90.jpg
+||tb2.bdstatic.com/tb/static-user/widget/celebrity/img/single_member_100_0b51e9e.png
+||tb2.bdstatic.com/tb/img/ihome_batou_icon_636b52f.png
