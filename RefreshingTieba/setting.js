@@ -1,8 +1,8 @@
-/*jshint esversion: 6 */
+'use strict';
 // 是否开启debug模式
-let debugMode = false;
+const debugMode = false;
 // 通用模糊匹配，包含这个词就屏蔽
-let sensitiveWordsV2 = split(`
+const sensitiveWordsV2 = split(`
 share
 tbshare
 encourage
@@ -93,10 +93,11 @@ popup_zhang
 app_forum_top_nav
 fixed_bar
 brank_ad
+games
 `);
 
 // 从模板中移除的元素
-let selector = join(`
+const selector = join(`
 [id="pagelet_frs-aside/pagelet/ad"]
 [id*="encourage"]
 [id*="entertainment"]
@@ -119,18 +120,18 @@ let selector = join(`
 .brank_desc_wrap
 `);
 // bigpipe黑名单，全名
-let bigpipeBlackList = split(`
+const bigpipeBlackList = split(`
 frs-aside/pagelet/ad
 frs-aside/pagelet/search_back
 `);
 // bigpipe白名单，全名
-let bigpipeWhiteList = split(`
+const bigpipeWhiteList = split(`
 `);
 // module白名单，全名
-let moduleWhiteList = split(`
+const moduleWhiteList = split(`
 `);
 // module黑名单，全名
-let moduleBlackList = split(`
+const moduleBlackList = split(`
 ueditor/widget/topic_suggestion
 puser/widget/myApp
 fanclub/widget/fancard
@@ -145,49 +146,49 @@ frs-aside/widget/search_back
 frs-footer/widget/frs_from_guide
 frs-header/widget/brankForumCard
 `);
-let HOSTMAP = {
-    "codemonkey.baidu.com": "https://sp1.baidu.com/9bkCaTOb_gsJiBGko9WTAnF6hhy",
-    "g.imgsrc.baidu.com": "https://ss0.bdstatic.com/-fo4cT78BgN3otqbppnN2DJv",
-    "c.imgsrc.baidu.com": "https://ss0.bdstatic.com/9fo4cT78BgN3otqbppnN2DJv",
-    "wbapi.baidu.com": "https://sp2.baidu.com/6bYHfD4a2gU2pMbgoY3K",
-    "gx.baidu.com": "https://sp0.baidu.com/-ax1bjeh1BF3odCf",
-    "f.hiphotos.baidu.com": "https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy",
-    "ecmc.bdimg.com": "https://ss2.bdstatic.com/-0U0b8Sm1A5BphGlnYG",
-    "f.imgsrc.baidu.com": "https://ss0.bdstatic.com/-vo4cT78BgN3otqbppnN2DJv",
-    "s1.bdstatic.com": "https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K",
-    "e.hiphotos.baidu.com": "https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy",
-    "g.hiphotos.baidu.com": "https://ss3.baidu.com/-fo3dSag_xI4khGko9WTAnF6hhy",
-    "h.hiphotos.baidu.com": "https://ss0.baidu.com/7Po3dSag_xI4khGko9WTAnF6hhy",
-    "b.imgsrc.baidu.com": "https://ss0.bdstatic.com/9vo4cT78BgN3otqbppnN2DJv",
-    "c.hiphotos.baidu.com": "https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy",
-    "ecma.bdimg.com": "https://ss1.bdstatic.com/-0U0bXSm1A5BphGlnYG",
-    "d.hiphotos.baidu.com": "https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy",
-    "b.hiphotos.baidu.com": "https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy",
-    "a.hiphotos.baidu.com": "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy",
-    "wpl.baidu.com": "https://sp2.baidu.com/6aQ_sjip0QIZ8tyhnq",
-    "e.imgsrc.baidu.com": "https://ss0.bdstatic.com/-4o4cT78BgN3otqbppnN2DJv",
-    "d.hiphotos.bdimg.com": "https://ss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy",
-    "bos.lego.baidu.com": "https://ss0.baidu.com/9rkZsjKl1wd3otqbppnN2DJv",
-    "e.hiphotos.bdimg.com": "https://ss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy",
-    "f.hiphotos.bdimg.com": "https://ss1.bdstatic.com/-vo3dSag_xI4khGkpoWK1HF6hhy",
-    "map.baidu.com": "https://sp1.baidu.com/80MWsjip0QIZ8tyhnq",
-    "ecmd.bdimg.com": "https://ss0.bdstatic.com/-0U0aHSm1A5BphGlnYG",
-    "a.imgsrc.baidu.com": "https://ss0.bdstatic.com/94o4cT78BgN3otqbppnN2DJv",
-    "muses.baidu.com": "https://sp0.baidu.com/8_1ZaSna2gU2pMbgoY3K",
-    "d.imgsrc.baidu.com": "https://ss0.bdstatic.com/-Po4cT78BgN3otqbppnN2DJv",
-    "j.map.baidu.com": "https://sp0.baidu.com/7vo0bSba2gU2pMbgoY3K",
-    "api.map.baidu.com": "https://sp2.baidu.com/9_Q4sjOpB1gCo2Kml5_Y_D3",
-    "bdimg.share.baidu.com": "https://ss1.baidu.com/9rA4cT8aBw9FktbgoI7O1ygwehsv",
-    "b.hiphotos.bdimg.com": "https://ss1.bdstatic.com/9vo3dSag_xI4khGkpoWK1HF6hhy",
-    "h.imgsrc.baidu.com": "https://ss0.bdstatic.com/7Po4cT78BgN3otqbppnN2DJv",
-    "g.hiphotos.bdimg.com": "https://ss2.bdstatic.com/-fo3dSag_xI4khGkpoWK1HF6hhy",
-    "h.hiphotos.bdimg.com": "https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy",
-    "c.hiphotos.bdimg.com": "https://ss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy",
-    "a.hiphotos.bdimg.com": "https://ss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy",
-    "bzclk.baidu.com": "https://sp0.baidu.com/9q9JcDHa2gU2pMbgoY3K",
-    "ecmb.bdimg.com": "https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG",
+const HOSTMAP = {
+    'codemonkey.baidu.com': 'https://sp1.baidu.com/9bkCaTOb_gsJiBGko9WTAnF6hhy',
+    'g.imgsrc.baidu.com': 'https://ss0.bdstatic.com/-fo4cT78BgN3otqbppnN2DJv',
+    'c.imgsrc.baidu.com': 'https://ss0.bdstatic.com/9fo4cT78BgN3otqbppnN2DJv',
+    'wbapi.baidu.com': 'https://sp2.baidu.com/6bYHfD4a2gU2pMbgoY3K',
+    'gx.baidu.com': 'https://sp0.baidu.com/-ax1bjeh1BF3odCf',
+    'f.hiphotos.baidu.com': 'https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy',
+    'ecmc.bdimg.com': 'https://ss2.bdstatic.com/-0U0b8Sm1A5BphGlnYG',
+    'f.imgsrc.baidu.com': 'https://ss0.bdstatic.com/-vo4cT78BgN3otqbppnN2DJv',
+    's1.bdstatic.com': 'https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K',
+    'e.hiphotos.baidu.com': 'https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy',
+    'g.hiphotos.baidu.com': 'https://ss3.baidu.com/-fo3dSag_xI4khGko9WTAnF6hhy',
+    'h.hiphotos.baidu.com': 'https://ss0.baidu.com/7Po3dSag_xI4khGko9WTAnF6hhy',
+    'b.imgsrc.baidu.com': 'https://ss0.bdstatic.com/9vo4cT78BgN3otqbppnN2DJv',
+    'c.hiphotos.baidu.com': 'https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy',
+    'ecma.bdimg.com': 'https://ss1.bdstatic.com/-0U0bXSm1A5BphGlnYG',
+    'd.hiphotos.baidu.com': 'https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy',
+    'b.hiphotos.baidu.com': 'https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy',
+    'a.hiphotos.baidu.com': 'https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy',
+    'wpl.baidu.com': 'https://sp2.baidu.com/6aQ_sjip0QIZ8tyhnq',
+    'e.imgsrc.baidu.com': 'https://ss0.bdstatic.com/-4o4cT78BgN3otqbppnN2DJv',
+    'd.hiphotos.bdimg.com': 'https://ss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy',
+    'bos.lego.baidu.com': 'https://ss0.baidu.com/9rkZsjKl1wd3otqbppnN2DJv',
+    'e.hiphotos.bdimg.com': 'https://ss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy',
+    'f.hiphotos.bdimg.com': 'https://ss1.bdstatic.com/-vo3dSag_xI4khGkpoWK1HF6hhy',
+    'map.baidu.com': 'https://sp1.baidu.com/80MWsjip0QIZ8tyhnq',
+    'ecmd.bdimg.com': 'https://ss0.bdstatic.com/-0U0aHSm1A5BphGlnYG',
+    'a.imgsrc.baidu.com': 'https://ss0.bdstatic.com/94o4cT78BgN3otqbppnN2DJv',
+    'muses.baidu.com': 'https://sp0.baidu.com/8_1ZaSna2gU2pMbgoY3K',
+    'd.imgsrc.baidu.com': 'https://ss0.bdstatic.com/-Po4cT78BgN3otqbppnN2DJv',
+    'j.map.baidu.com': 'https://sp0.baidu.com/7vo0bSba2gU2pMbgoY3K',
+    'api.map.baidu.com': 'https://sp2.baidu.com/9_Q4sjOpB1gCo2Kml5_Y_D3',
+    'bdimg.share.baidu.com': 'https://ss1.baidu.com/9rA4cT8aBw9FktbgoI7O1ygwehsv',
+    'b.hiphotos.bdimg.com': 'https://ss1.bdstatic.com/9vo3dSag_xI4khGkpoWK1HF6hhy',
+    'h.imgsrc.baidu.com': 'https://ss0.bdstatic.com/7Po4cT78BgN3otqbppnN2DJv',
+    'g.hiphotos.bdimg.com': 'https://ss2.bdstatic.com/-fo3dSag_xI4khGkpoWK1HF6hhy',
+    'h.hiphotos.bdimg.com': 'https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy',
+    'c.hiphotos.bdimg.com': 'https://ss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy',
+    'a.hiphotos.bdimg.com': 'https://ss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy',
+    'bzclk.baidu.com': 'https://sp0.baidu.com/9q9JcDHa2gU2pMbgoY3K',
+    'ecmb.bdimg.com': 'https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG',
 };
-let scriptBlackList = [
+const scriptBlackList = [
     'fex.bdstatic.com/hunter/alog/',
     'passport.baidu.com/static/passpc-base/js/(dv/8|ld|fld).min.js(\\?|$)',
     'passport.baidu.com/static/passpc-account/js/module/fingerload.js(\\?|$)',
@@ -202,66 +203,66 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
     'use strict';
     return {
         block: {
-            "props/component/PropsApi": {
+            'props/component/PropsApi': {
                 showUI: emptyStr,
-                showUIHtml: emptyStr
+                showUIHtml: emptyStr,
             },
-            "puser/component/PropsApi": {
-                showUIHtml: emptyStr
+            'puser/component/PropsApi': {
+                showUIHtml: emptyStr,
             },
-            "user/widget/icons": {
+            'user/widget/icons': {
                 getPreIconHtml: emptyStr,
                 getTbvipIconHtml: emptyStr,
-                getIconsHtml: emptyStr
+                getIconsHtml: emptyStr,
             },
-            "user/widget/Icons": {
+            'user/widget/Icons': {
                 getPreIconHtml: emptyStr,
                 getTbvipIconHtml: emptyStr,
-                getIconsHtml: emptyStr
+                getIconsHtml: emptyStr,
             },
-            "puser/widget/icons": {
+            'puser/widget/icons': {
                 getPreIconHtml: emptyStr,
                 getTbvipIconHtml: emptyStr,
-                getIconsHtml: emptyStr
+                getIconsHtml: emptyStr,
             },
-            "user/widget/month_icon": {
-                getMonthIcon: emptyStr
+            'user/widget/month_icon': {
+                getMonthIcon: emptyStr,
             },
-            "puser/widget/MonthIcon": {
-                getMonthIcon: emptyStr
+            'puser/widget/MonthIcon': {
+                getMonthIcon: emptyStr,
             },
-            "ihome/widget/MonthIcon": {
-                getMonthIcon: emptyStr
+            'ihome/widget/MonthIcon': {
+                getMonthIcon: emptyStr,
             },
-            "props/widget/Residual": {
-                showUI: emptyStr
+            'props/widget/Residual': {
+                showUI: emptyStr,
             },
-            "tbui/widget/tbshare_popup": {
-                setShareContent: noop
+            'tbui/widget/tbshare_popup': {
+                setShareContent: noop,
             },
-            "pcommon/widget/pb_track": {
-                _track: noop
+            'pcommon/widget/pb_track': {
+                _track: noop,
             },
-            "tbmall/component/util": {
-                getMaxLevel: function() {
+            'tbmall/component/util': {
+                getMaxLevel() {
                     return 0;
-                }
+                },
             },
-            "pcommon/widget/AudioPlayer": html5AudioPlayer,
-            "tbui/widget/audio_player": html5AudioPlayer,
-            "common/widget/AudioPlayer": html5AudioPlayer,
+            'pcommon/widget/AudioPlayer': html5AudioPlayer,
+            'tbui/widget/audio_player': html5AudioPlayer,
+            'common/widget/AudioPlayer': html5AudioPlayer,
         },
         override: {
-            "frs-list/pagelet/thread_list": {
-                checkLogin: noop
+            'frs-list/pagelet/thread_list': {
+                checkLogin: noop,
             },
-            "puser/widget/sign_mod_bright": {
-                handlePrintFlower: noop
+            'puser/widget/sign_mod_bright': {
+                handlePrintFlower: noop,
             },
-            "tbui/widget/js_redirect": {
-                _track: noop
+            'tbui/widget/js_redirect': {
+                _track: noop,
             },
-            "tbui/widget/aside_float_bar": {
+            'tbui/widget/aside_float_bar': {
                 _square: noop,
                 _bottle: noop,
                 _nobottle: noop,
@@ -271,14 +272,14 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                 _down: noop,
                 bottleBubble: noop,
             },
-            "pcommon/widget/AsideFloatBar": {
+            'pcommon/widget/AsideFloatBar': {
                 _square: noop,
                 _radar: noop,
                 _tsukkomi: noop,
                 _props: noop,
                 _down: noop,
             },
-            "common/widget/AsideFloatBar": {
+            'common/widget/AsideFloatBar': {
                 _square: noop,
                 _radar: noop,
                 _tsukkomi: noop,
@@ -286,7 +287,7 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                 _props: noop,
                 _down: noop,
             },
-            "tbui/widget/http_transform": {
+            'tbui/widget/http_transform': {
                 httpLinkHover: noop,
             },
         },
@@ -304,10 +305,10 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                 };
             }
             */
-        }
+        },
     };
 }
-let setting = {
+const setting = {
     debugMode,
     sensitiveWordsV2,
     selector,
