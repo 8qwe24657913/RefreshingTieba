@@ -1,4 +1,5 @@
 'use strict';
+
 function inject(setting, getSpecialModules, toFastProperties) {
     'use strict';
     const {
@@ -160,7 +161,8 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 module: [],
                 bigpipe: [],
                 element: [],
-            }, passed = [];
+            },
+            passed = [];
         logBlocked = function(type, info) {
             blocked[type].push(info);
         };
@@ -180,7 +182,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
         }
         const {
             enumerable = true,
-            writable = true,
+                writable = true,
         } = Object.getOwnPropertyDescriptor(parent, name) || {};
         Object.defineProperty(parent, name, {
             configurable: true,
@@ -210,6 +212,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
     }
 
     const sensitiveWordsRegExp = new RegExp(`(^|\\b|_)(${sensitiveWordsV2.join('|')})($|\\b|_)`, 'i');
+
     function hasSensitiveWords(text) {
         return sensitiveWordsRegExp.test(text.replace(/([A-Z])/g, '_$1'));
     }
@@ -269,7 +272,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 elem.innerHTML = '';
                 return;
             }
-            while (elem.firstChild) temp.appendChild(elem.firstChild);
+            while (elem.firstChild) tempFragement.appendChild(elem.firstChild);
             if (!clearId) clearId = setTimeout(cleaner, 50);
         }
         const template = document.createElement('template');
@@ -341,6 +344,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
         } : createNoop;
 
         const _define = Module.define;
+
         function fakeDefine(path, sub_ori) {
             if (defined.has(path)) {
                 if (debugMode && sub_ori && !defined.get(path)) defined.set(path, sub_ori);
@@ -437,7 +441,9 @@ function inject(setting, getSpecialModules, toFastProperties) {
             $.fn.offset = function(...args) {
                 const res = offset.call(this, ...args);
                 if (res) return res;
-                return new Error().stack.includes('UserMessage.js') ? { left: 0 } : res;
+                return new Error().stack.includes('UserMessage.js') ? {
+                    left: 0
+                } : res;
             };
         }
     });
