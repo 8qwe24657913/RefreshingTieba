@@ -78,6 +78,7 @@ conf_skin
 marry
 head_recom
 P0WRqyv
+P0WRqyvp0
 lego
 pv_from_client
 app_download
@@ -195,6 +196,7 @@ const scriptBlackList = [
     'hm.baidu.com/',
     'img.baidu.com/hunter/',
     'xiangce.baidu.com/public_home/api/checkshow\\?', // 一个根本不存在的API……
+    'afd.baidu.com/',
     'tb1.bdstatic.com/tb/cms/(itieba/oftenforum_jsdata|ofjsdata).js(\\?|$)',
     '(' + [...Object.entries(HOSTMAP)].reduce((prev, [http, https]) => prev.concat([http, https.slice(8)]), []).join('|') + ')/',
 ].map(rule => ('^https?://' + rule).replace(/(\.|\/)/g, '\\$1'));
@@ -289,6 +291,30 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
             },
             'tbui/widget/http_transform': {
                 httpLinkHover: noop,
+            },
+            'common/widget/Userbar': {
+                _isDateTime: noop,
+                _bluePush: noop,
+                _bindEvent: noop,
+                _buildMember: noop,
+                _flowRateTest: noop,
+                _getJoinVip: noop,
+                _buildToHome: noop,
+                _buildToExtraUrl: noop,
+                _buildOfflineCard: noop,
+            },
+            'spage/widget/forumDirectory': {
+                showYYLiveForum: noop,
+                buildYYLiveForum: noop,
+                getYYLiveForum: noop,
+            },
+            'album/component/initApiConfig': {
+                loginEvent: noop,
+                showLikeButton: noop,
+                hideLikeButton: noop,
+                setLikeButtonPosition: noop,
+                resetAndshowLikeButton: noop,
+                queryAndshowLikeButton: noop,
             },
         },
         hook: {

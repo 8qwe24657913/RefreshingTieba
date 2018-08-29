@@ -36,8 +36,10 @@ function inject(setting, getSpecialModules, toFastProperties) {
         url: '',
         initial(options) {
             const that = this;
-            this.options = $.extend(this.defaultOptions, options);
-            this.audio = $('<audio autoplay="false"></audio>').get(0);
+            this.options = Object.assign({}, this.defaultOptions, options);
+            this.audio = document.createElement('audio');
+            this.audio.setAttribute('autoplay', 'false');
+            this.audio.setAttribute('preload', 'metadata');
             window.pl = this;
             this.isReady = true;
             this.bindEvents();
@@ -57,24 +59,24 @@ function inject(setting, getSpecialModules, toFastProperties) {
         },
         _reset() {
             this._stop();
-            this.audio.src = this.url = '';
+            this.audio.removeAttribute('src');
+            this.url = '';
             this.isPlaying = false;
         },
         _load(t, url, success, fail) {
-            const that = this;
             this.url = url;
             if (this.failHandler) {
                 clearTimeout(this.failHandler);
             }
 
-            function listener() {
-                that.audio.removeEventListener('canplaythrough', listener, false);
-                that.trigger('songloaded', that._getLoadedPercent());
-                if (that.failHandler) clearTimeout(that.failHandler);
+            const listener = () => {
+                this.audio.removeEventListener('canplaythrough', listener, false);
+                this.trigger('songloaded', this._getLoadedPercent());
+                if (this.failHandler) clearTimeout(this.failHandler);
                 if (success) success();
             }
             this.failHandler = setTimeout(() => {
-                that.audio.removeEventListener('canplaythrough', listener, false);
+                this.audio.removeEventListener('canplaythrough', listener, false);
                 if (fail) {
                     fail();
                 }
@@ -84,37 +86,35 @@ function inject(setting, getSpecialModules, toFastProperties) {
             this.audio.src = url;
         },
         _play(t, updateTotal, updateTime, finish) {
-            const that = this;
-            if (!this.isPlaying) {
-                const totalTime = this.audio.duration * 1000;
-                this.audio.play();
-                if (this.checkFinishedHandler) {
-                    clearTimeout(this.checkFinishedHandler);
-                }
-                this.isPlaying = true;
-                if (updateTotal) {
-                    updateTotal({
+            if (this.isPlaying) return;
+            this.audio.play();
+            if (this.checkFinishedHandler) {
+                clearTimeout(this.checkFinishedHandler);
+            }
+            this.isPlaying = true;
+            if (updateTotal) {
+                updateTotal({
+                    totalTime: this._getTotalTime(),
+                });
+            }
+            const getTime = () => {
+                if (updateTime) {
+                    const currentTime = this._getCurrentTime(),
+                        totalTime = this._getTotalTime();
+                    updateTime({
+                        currentTime,
                         totalTime,
+                        percent: currentTime / totalTime,
                     });
                 }
-                this.checkFinishedHandler = setTimeout(function getTime() {
-                    const currentTime = that.audio.currentTime * 1000;
-                    const percent = currentTime / totalTime;
-                    if (updateTime) {
-                        updateTime({
-                            percent,
-                            totalTime,
-                            currentTime,
-                        });
-                    }
-                    if (that.audio.ended) {
-                        that.trigger('playfinish', 1);
-                        if (finish) finish();
-                    } else {
-                        setTimeout(getTime, 500);
-                    }
-                }, 1E3);
+                if (this.audio.ended) {
+                    this.trigger('playfinish', 1);
+                    if (finish) finish();
+                } else {
+                    setTimeout(getTime, 500);
+                }
             }
+            this.checkFinishedHandler = setTimeout(getTime, 1E3);
         },
         _pause() {
             if (this.isPlaying) {
@@ -138,24 +138,31 @@ function inject(setting, getSpecialModules, toFastProperties) {
         },
         _setCurrentPosition() {},
         _getCurrentPosition() {
-            return this.audio.currentTime / this.audio.duration;
+            return this._getCurrentTime() / this._getDurationSec();
         },
         _getLoadedPercent() {
-            return this.audio.buffered.end(this.audio.buffered.length - 1) / this.audio.duration;
+            return this.audio.buffered.end(this.audio.buffered.length - 1) / this._getDurationSec();
+        },
+        _getDurationSec() {
+            const duration = this.audio.duration;
+            return duration !== Infinity ? duration : 10000 * 60; // fake time
         },
         _getTotalTime() {
-            return this.audio.duration * 1000;
+            return this._getDurationSec() * 1000;
+        },
+        _getCurrentTimeSec() {
+            return this.audio.currentTime;
         },
         _getCurrentTime() {
-            return this.audio.currentTime * 1000;
+            return this._getCurrentTimeSec() * 1000;
         },
     };
     const specialModules = getSpecialModules(noop, emptyStr, html5AudioPlayer);
     // Logging
     let logBlocked, logPassed;
-    console.info('[清爽贴吧]正在运行中' + (window.top === window ? '' : `(from iframe: ${location.href})`));
-
-    if (debugMode) {
+    if (!debugMode) {
+        console.info('[清爽贴吧]正在运行中' + (window.top === window ? '' : `(from iframe: ${location.href})`));
+    } else {
         const blocked = {
                 script: [],
                 module: [],
@@ -169,11 +176,13 @@ function inject(setting, getSpecialModules, toFastProperties) {
         logPassed = function(info) {
             passed.push(info);
         };
-        console.info('[清爽贴吧]过滤的模块:', blocked);
-        console.info('[清爽贴吧]放行的模块:', passed);
+        console.group('[清爽贴吧]正在运行中' + (window.top === window ? '' : `(from iframe: ${location.href})`));
+        console.dir('过滤的模块:', blocked);
+        console.dir('放行的模块:', passed);
+        console.groupEnd();
     }
     // 劫持用
-    function hijackOnce(parent, name, filter) {
+    function hijackOnce(parent, name, filter, desc) {
         const prop = parent[name];
         if (prop) {
             const newProp = filter(prop);
@@ -182,8 +191,8 @@ function inject(setting, getSpecialModules, toFastProperties) {
         }
         const {
             enumerable = true,
-                writable = true,
-        } = Object.getOwnPropertyDescriptor(parent, name) || {};
+            writable = true,
+        } = Object.assign(Object.getOwnPropertyDescriptor(parent, name) || {}, desc);
         Object.defineProperty(parent, name, {
             configurable: true,
             enumerable,
@@ -201,10 +210,10 @@ function inject(setting, getSpecialModules, toFastProperties) {
         });
     }
 
-    function hijack(parent, path, filter) {
+    function hijack(parent, path, filter, desc) {
         const name = path.split('.');
         let pos = 0;
-        if (name.length === 1) return hijackOnce(parent, path, filter);
+        if (name.length === 1) return hijackOnce(parent, path, filter, desc);
         (function f(node) {
             if (pos === name.length) return filter(node);
             hijackOnce(node, name[pos++], f);
@@ -226,17 +235,16 @@ function inject(setting, getSpecialModules, toFastProperties) {
             }
             return true;
         }
-        const _register = Bigpipe.register;
-        Bigpipe.register = function(name, info) {
+        hijack(Bigpipe, 'register', register => function(name, info) {
             if (!check(name)) {
                 return {
                     then: noop,
                 };
             }
-            if (info.scripts) info.scripts = info.scripts.filter(check);
-            if (info.styles) info.styles = info.styles.filter(check);
-            return _register.call(Bigpipe, name, info);
-        };
+            if (Array.isArray(info.scripts)) info.scripts = info.scripts.filter(check);
+            if (Array.isArray(info.styles)) info.styles = info.styles.filter(check);
+            return register.call(Bigpipe, name, info);
+        });
         // 模板过滤
         Bigpipe.debug(true);
         const Pagelet = Bigpipe.Pagelet;
@@ -244,7 +252,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
         toFastProperties(Bigpipe);
         Pagelet.prototype._getHTML = function() { // 略微提高性能
             let html, elem;
-            if (typeof this.content !== 'undefined') { // 钦定了this.content
+            if (this.content !== undefined) { // 钦定了this.content
                 html = this.content;
             } else {
                 elem = document.getElementById('pagelet_html_' + this.id);
@@ -257,23 +265,27 @@ function inject(setting, getSpecialModules, toFastProperties) {
             }
             return html;
         };
-        let $tempFragement,
+        let $clearElem,
             clearId = 0;
-        const tempFragement = document.createDocumentFragment(),
+        const clearElem = document.createElement('template'),
             cleaner = function() { // 不要在当前事件cleanData
-                if (!$tempFragement) $tempFragement = window.jQuery(tempFragement);
-                $tempFragement.empty();
+                if (!$clearElem) $clearElem = window.jQuery(clearElem);
+                $clearElem.empty();
                 clearId = 0;
             };
 
         function empty(elem) { // 用jq是为了尝试解决内存泄漏，先把内容移出，一会把内容cleanData(因为比较费时)
             if (!elem.hasChildNodes()) return;
             if (!window.jQuery) {
-                elem.innerHTML = '';
+                elem.innerHTML = ''; // 还没引入 jq 自然就没有 jq 导致的内存泄漏
                 return;
             }
-            while (elem.firstChild) tempFragement.appendChild(elem.firstChild);
-            if (!clearId) clearId = setTimeout(cleaner, 50);
+            const range = document.createRange();
+            range.selectNodeContents(elem);
+            const contents = range.extractContents()
+            clearElem.appendChild(contents);
+            if (clearId) clearTimeout(clearId);
+            clearId = setTimeout(cleaner, 50);
         }
         const template = document.createElement('template');
         Pagelet.prototype._appendTo = function(pagelet) {
@@ -289,11 +301,17 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 if (content) {
                     template.innerHTML = content; // fix: range.createContextualFragment() will load the resources unexpectedly
                     const fragment = template.content;
-                    for (const elem of fragment.querySelectorAll(selector)) { // NodeList is immutable
+                    // fliter elements
+                    const elemsToRemove = fragment.querySelectorAll(selector); // NodeList from querySelectorAll() is immutable
+                    for (const elem of elemsToRemove) {
                         elem.remove();
-                        if (debugMode) logBlocked('element', elem);
                     }
-                    const scripts = fragment.querySelectorAll('script'); // NodeList is immutable
+                    if (debugMode) {
+                        for (const elem of elemsToRemove) {
+                            logBlocked('element', elem);
+                        }
+                    }
+                    const scripts = fragment.querySelectorAll('script'); // NodeList from querySelectorAll() is immutable
                     doc.appendChild(fragment);
                     for (const script of scripts) { // imperfect fix: <script> doesn't work
                         const replacement = document.createElement('script');
@@ -317,11 +335,10 @@ function inject(setting, getSpecialModules, toFastProperties) {
             }
             return true;
         }
-        const _use = Module.use;
-        Module.use = function(a, b, c, d) {
+        hijack(Module, 'use', use => function(a, b, c, d) {
             if (!check(a)) return;
-            return _use.call(Module, a, b, c, d);
-        };
+            return use.call(Module, a, b, c, d);
+        });
         const defined = new Map();
         const DEFINED_STATES = {
             PASSED: 1,
@@ -333,6 +350,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 Object.setPrototypeOf(this, new Proxy(Object.getPrototypeOf(this), {
                     get(target, property, receiver) {
                         if (property in target) return target[property];
+                        // DebuggerStatement affects performance though it's not executed
                         //debugger;
                         console.warn('[清爽贴吧]Undefined property:', path, property, defined.get(path), target);
                         return function() {
@@ -391,8 +409,9 @@ function inject(setting, getSpecialModules, toFastProperties) {
     function setNoop(parent, name) {
         Object.defineProperty(parent, name, {
             value: noop,
-            writable: false,
             configurable: false,
+            enumerable: false,
+            writable: false,
         });
     }
     // 广告过滤
@@ -405,21 +424,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
         setNoop(PageLink, 'init');
         setNoop(PageLink, '_onclick');
     });
-    // tieba.baidu.com/managerapply/apply 引入了两个 jQuery 且不用 $.noConflict() 你敢信？
-    Object.defineProperty(window, 'jQuery', {
-        value: window.jQuery,
-        configurable: true,
-        enumerable: true,
-        writable: false,
-    });
     hijack(window, 'jQuery', $ => {
-        // 理由同上，前人挖坑后人埋
-        Object.defineProperty(window, '$', {
-            value: $,
-            configurable: true,
-            enumerable: true,
-            writable: false,
-        });
         hijack($, 'stats', stats => {
             for (const name of Object.keys(stats)) {
                 setNoop(stats, name);
@@ -436,16 +441,25 @@ function inject(setting, getSpecialModules, toFastProperties) {
             }
         });
         // wtf???  奇奇怪怪的bug处理
-        {
-            const offset = $.fn.offset;
-            $.fn.offset = function(...args) {
-                const res = offset.call(this, ...args);
-                if (res) return res;
-                return new Error().stack.includes('UserMessage.js') ? {
-                    left: 0
-                } : res;
-            };
-        }
+        hijack($.fn, 'offset', offset => function(...args) {
+            const res = offset.call(this, ...args);
+            if (!res && new Error().stack.includes('UserMessage.js')) {
+                $.fn.offset = offset;
+                return {
+                    left: 0,
+                }
+            }
+            return res;
+        });
+        // tieba.baidu.com/managerapply/apply 引入了两个 jQuery 且不用 $.noConflict() 你敢信？
+        Object.defineProperty(window, '$', {
+            value: $,
+            configurable: true,
+            enumerable: true,
+            writable: false,
+        });
+    }, {
+        writable: false, // 理由同上，前人挖坑后人填
     });
     // 免登录看帖
     hijack(window, 'PageData.user', user => {
@@ -477,24 +491,25 @@ function inject(setting, getSpecialModules, toFastProperties) {
         },
     });
     hijack(EventTarget, 'prototype', prototype => { // 滚动速度提升
-        const eventTypes = 'wheel,mousewheel,DOMMouseScroll,MozMousePixelScroll,scroll,touchstart,touchmove,touchend,touchcancel,mousemove'.split(',');
-        const _add = prototype.addEventListener,
-            _remove = prototype.removeEventListener;
-        prototype.addEventListener = function(type, handler, capture) {
-            if (!eventTypes.includes(type) || typeof capture !== 'boolean' || ![window, document, document.body].includes(this) || new Error().stack.includes('eval')) return _add.call(this, type, handler, capture);
+        const eventTypes = new Set('wheel,mousewheel,DOMMouseScroll,MozMousePixelScroll,scroll,touchstart,touchmove,touchend,touchcancel,mousemove'.split(','));
+        hijack(prototype, 'addEventListener', _add => function(type, handler, capture) {
+            if (!eventTypes.has(type) // 不需要强制 passive 的事件类型
+                || typeof capture !== 'boolean' // 已经规定了是否 passive
+                || new Error().stack.includes('eval') // 防止与 userscript 冲突
+            ) return _add.call(this, type, handler, capture);
             if (type === 'mousemove') return; // 监听这个的都是分享、XSS监控这种鸡肋玩意
             return _add.call(this, type, handler, {
                 capture,
                 passive: true,
             });
-        }
-        prototype.removeEventListener = function(type, handler, capture) {
-            if (!eventTypes.includes(type) || typeof capture !== 'boolean') return _remove.call(this, type, handler, capture);
+        });
+        hijack(prototype, 'removeEventListener', _remove => function(type, handler, capture) {
+            if (!eventTypes.has(type) || typeof capture !== 'boolean') return _remove.call(this, type, handler, capture);
             return _remove.call(this, type, handler, {
                 capture,
                 passive: true,
             });
-        }
+        });
     });
 }
 const toFastProperties = `function toFastProperties(obj) {

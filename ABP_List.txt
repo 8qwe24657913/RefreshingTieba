@@ -1,6 +1,6 @@
 [Adblock Plus 2.0]
-! Checksum: U7FcXJOSjjDvV/QWjXkN3w
-! Version: 20180809183700
+! Checksum: t+j+CTWOuHvvgf9zPXD8EA
+! Version: 20180830002117
 ! Title: Refreshing Tieba's Additional List
 ! Expires: 10 days
 ! Homepage: https://github.com/8qwe24657913/RefreshingTieba
@@ -11,16 +11,27 @@
 ! ||tieba.baidu.com/pmc/recycle#@#.ui_bubble_down
 
 ! block resources
-||tb1.bdstatic.com/tb/cms/ngmis/file_1483927579063.html
 ||tblcs.baidu.com
 ||bcebos.com
 ||bj.bcebos.com
 ||cpro.baidustatic.com
 ||entry.baidu.com
-https://gss0.baidu.com/6qVSsjikBxIFlNKl8IuM_a/open/api/front2.js
-/^https?://tb1\.bdstatic\.com\/\?\?\/tb\/_\/fixed_bar_\w+\.js$/
+||tb1.bdstatic.com/tb/cms/ngmis/file_1483927579063.html
+||tb1.bdstatic.com/tb/cms/ngmis/images/file_1535364500519.jpg
 ||tb1.bdstatic.com/tb/cms/PC%E7%AB%AF%E5%BA%95%E9%83%A8%E9%80%9A%E6%A0%8F%E5%BC%B9%E5%B1%821000x120.png
-https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/tam-ogel/c47a8468f4612f66133a86f0fe01a38c_980_90.jpg
-http://ecmb.bdimg.com/tam-ogel/c47a8468f4612f66133a86f0fe01a38c_980_90.jpg
-||tb2.bdstatic.com/tb/static-user/widget/celebrity/img/single_member_100_0b51e9e.png
+||tb1.bdstatic.com/tb/cms/game/*
+||tb1.bdstatic.com/tb/cms/tbmall/*
+||tb1.bdstatic.com/tb/cms/liveshow/*
+||tb1.bdstatic.com/tb/r/image/201*
 ||tb2.bdstatic.com/tb/img/ihome_batou_icon_636b52f.png
+||tb2.bdstatic.com/tb/static-*/widget/celebrity/*
+||tb2.bdstatic.com/tb/static-*/widget/spage_game_tab/*
+||tb2.bdstatic.com/tb/static-*/widget/nani_app_download/*
+||tb2.bdstatic.com/tb/static-*/widget/fixed_bar/*
+||tb2.bdstatic.com/tb/static-*/img/bdshare/*
+https://gss0.baidu.com/6qVSsjikBxIFlNKl8IuM_a/open/api/front2.js
+https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/tam-ogel/*
+http://ecmb.bdimg.com/tam-ogel/*
+https://gsp0.baidu.com/5aAHeD3nKhI2p27j8IqW0jdnxx1xbK/tb/img/pv.gif?*
+||i2.baidu.com/it/*trade=*$image
+/^https?://tb1\.bdstatic\.com\/\?\?\/tb\/_\/fixed_bar_\w+\.js$/
