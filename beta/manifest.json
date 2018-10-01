@@ -1,0 +1,22 @@
+{
+    "background": {
+        "scripts": ["setting.js", "background.js"],
+        "persistent": false
+    },
+    "content_scripts": [{
+        "all_frames": true,
+        "js": ["setting.js", "run.js"],
+        "css": ["content.css"],
+        "matches": ["http://tieba.baidu.com/*", "https://tieba.baidu.com/*"],
+        "exclude_globs": ["*://tieba.baidu.com/game/*", "*://tieba.baidu.com/tbmall/*", "*://tieba.baidu.com/tbvip/*"],
+        "run_at": "document_start"
+    }],
+    "description": "过滤贴吧的各种广告、无用的脚本和样式，提升加载速度，减少内存占用，附带免登录看帖，语音贴替换为 html5 播放等功能 - beta 版使用实验性 declarativeWebRequest API，进一步节省内存",
+    "manifest_version": 2,
+    "name": "清爽贴吧 β",
+    "version": "0.0.0.0",
+    "permissions": [
+        "declarativeWebRequest",
+        "*://*/*"
+    ]
+}

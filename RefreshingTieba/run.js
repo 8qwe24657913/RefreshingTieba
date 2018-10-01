@@ -23,10 +23,8 @@ function inject(setting, getSpecialModules, toFastProperties) {
     function emptyStr() {
         return '';
     }
-    if (Object.freeze) {
-        Object.freeze(noop);
-        Object.freeze(emptyStr);
-    }
+    Object.freeze(noop);
+    Object.freeze(emptyStr);
     const html5AudioPlayer = {
         defaultOptions: {},
         isReady: false,
@@ -177,8 +175,10 @@ function inject(setting, getSpecialModules, toFastProperties) {
             passed.push(info);
         };
         console.group('[清爽贴吧]正在运行中' + (window.top === window ? '' : `(from iframe: ${location.href})`));
-        console.dir('过滤的模块:', blocked);
-        console.dir('放行的模块:', passed);
+        console.log('过滤的模块:');
+        console.dir(blocked);
+        console.log('放行的模块:');
+        console.dir(passed);
         console.groupEnd();
     }
     // 劫持用
@@ -328,6 +328,22 @@ function inject(setting, getSpecialModules, toFastProperties) {
     });
     // 模块过滤
     hijack(window, '_.Module', Module => {
+        let _requireInstance;
+        const requireInstance = function (path, params) {
+            moduleFilter(path);
+            return _requireInstance.call(this, path, params);
+        };
+        // get requireInstance() by some black magic
+        Module.define({
+            path: 'common/widget/RefreshingTieba',
+            sub: {
+                initial() {
+                    _requireInstance = this.requireInstance;
+                }
+            },
+        });
+        Module.use('common/widget/RefreshingTieba');
+
         function check(module) { // 放行返回true
             if (moduleBlackList.includes(module) || hasSensitiveWords(module) && !moduleWhiteList.includes(module) || specialModules.block[module]) {
                 if (debugMode) logBlocked('module', module);
@@ -370,6 +386,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
             }
             const sub = {
                 initial: createInitial(path), // 不用同一个initial，因为这上面会被做标记
+                requireInstance,
             };
             const overrider = specialModules.block[path];
             if (overrider) Object.assign(sub, overrider);
@@ -397,22 +414,27 @@ function inject(setting, getSpecialModules, toFastProperties) {
                     console.warn('[清爽贴吧]遇到问题：未知的requires字段', info);
                 }
             }
+            if (info.extend) moduleFilter(info.extend);
             if (specialModules.hook[info.path]) specialModules.hook[info.path](info);
             const overrider = specialModules.override[info.path];
             if (overrider) Object.assign(info.sub, overrider);
+            info.sub.requireInstance = requireInstance;
             defined.set(info.path, overrider ? DEFINED_STATES.OVERRIDED : DEFINED_STATES.PASSED);
             if (debugMode) logPassed(info.path);
             return _define.call(Module, info);
         };
     });
 
-    function setNoop(parent, name) {
+    function fixProp(parent, name, value) {
         Object.defineProperty(parent, name, {
-            value: noop,
-            configurable: false,
-            enumerable: false,
+            value,
+            configurable: true,
+            enumerable: true,
             writable: false,
         });
+    }
+    function setNoop(parent, name) {
+        fixProp(parent, name, noop);
     }
     // 广告过滤
     setNoop(window, 'BAIDU_VIDEO_FROAD_FILL');
@@ -425,10 +447,25 @@ function inject(setting, getSpecialModules, toFastProperties) {
         setNoop(PageLink, '_onclick');
     });
     hijack(window, 'jQuery', $ => {
-        hijack($, 'stats', stats => {
-            for (const name of Object.keys(stats)) {
-                setNoop(stats, name);
+        // 写死一些统计函数，即使过滤掉 tb_stats_xxxxx.js 也能正常工作
+        fixProp($, 'stats', {});
+        window.Stats = window.Statistics = $.stats;
+        for (const name of ['hive', 'processTag', 'redirect', 'scanPage', 'sendRequest', 'track', '_warn']) {
+            $.stats[name] = noop;
+        }
+        Object.freeze($.stats);
+        window.FP_ARG = window.FP_ARG || {
+            page: 'frs',
+            source: 'profile',
+            tpl: 'tieba',
+        };
+        hijack($, 'tb', tb => {
+            fixProp(tb, 'Stats', {});
+            for (const name of ['bind', 'unbind', 'sendRequest']) {
+                tb.Stats[name] = noop;
             }
+            tb.Stats.getPath = emptyStr;
+            Object.freeze(tb.Stats);
         });
         // 允许关闭对话框
         hijack($, 'dialog', Dialog => class ForceCloseableDialog extends Dialog {
@@ -452,12 +489,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
             return res;
         });
         // tieba.baidu.com/managerapply/apply 引入了两个 jQuery 且不用 $.noConflict() 你敢信？
-        Object.defineProperty(window, '$', {
-            value: $,
-            configurable: true,
-            enumerable: true,
-            writable: false,
-        });
+        fixProp(window, '$', $);
     }, {
         writable: false, // 理由同上，前人挖坑后人填
     });
@@ -477,9 +509,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 return is_login;
             },
         });
-        Object.defineProperty(user, 'no_un', {
-            value: 0,
-        });
+        fixProp(user, 'no_un', 0);
     });
     // 阻止特定脚本动态加载
     const originalSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');

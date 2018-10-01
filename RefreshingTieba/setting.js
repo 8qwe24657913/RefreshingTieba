@@ -95,6 +95,8 @@ app_forum_top_nav
 fixed_bar
 brank_ad
 games
+interview
+tpl
 `);
 
 // 从模板中移除的元素
@@ -119,6 +121,8 @@ const selector = join(`
 .nani_app_download_box
 .brank_ad_wap
 .brank_desc_wrap
+.interview
+.meizi-header-wrapper
 `);
 // bigpipe黑名单，全名
 const bigpipeBlackList = split(`
@@ -227,6 +231,11 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                 getTbvipIconHtml: emptyStr,
                 getIconsHtml: emptyStr,
             },
+            'puser/widget/Icons': {
+                getPreIconHtml: emptyStr,
+                getTbvipIconHtml: emptyStr,
+                getIconsHtml: emptyStr,
+            },
             'user/widget/month_icon': {
                 getMonthIcon: emptyStr,
             },
@@ -318,6 +327,13 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
             },
         },
         hook: {
+           'frs-list/widget/util_media_controller': function(info) {
+                let render = info.sub.render;
+                info.sub.render = function(config) {
+                    config.videoAutoPlay = 0; // 禁用 frs 页视频自动播放
+                    return render.call(this, config);
+                };
+            },
             /*
             "message/widget/chat_content": function(info) {
                 if (!info.requires) info.requires = [];
@@ -329,7 +345,7 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                     }
                     return initial.call(this, config);
                 };
-            }
+            },
             */
         },
     };
