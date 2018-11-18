@@ -4,7 +4,7 @@
 # 如何安装
 
 法一：
-> 下载 [RefreshingTieba.crx](https://github.com/8qwe24657913/RefreshingTieba/raw/master/RefreshingTieba.crx)，打开 chrome://extensions/ ，拖入安装
+> 下载 [RefreshingTieba.crx](https://github.com/8qwe24657913/RefreshingTieba/releases)，打开 chrome://extensions/ ，拖入安装
 
 法二：
 
@@ -25,7 +25,7 @@
 
 ## [实验性扩展]清爽贴吧 β
 
-由于使用的实验性 declarativeWebRequest API 仅在 Beta 与 Dev 分支下可用，不提供 crx 安装包，想尝试可以将 RefreshingTieba 文件夹下**除了 manifest.json** 的文件复制到 beta 目录下，并用开发者模式加载 beta 目录，请注意安装此扩展后无需且不应安装原扩展，否则可能会造成预料之外的问题
+由于使用的实验性 declarativeWebRequest API 仅在 Beta 与 Dev 分支下可用，不提供 crx 安装包，想尝试可以用开发者模式加载 beta 目录，请注意安装此扩展后无需且不应安装原扩展，否则可能会造成预料之外的问题
 
 # 做了什么
 * 减少不必要的js、css加载

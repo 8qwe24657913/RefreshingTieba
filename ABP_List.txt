@@ -1,6 +1,6 @@
 [Adblock Plus 2.0]
-! Checksum: iVXb8u4RTqFV3YSZnK1rtw
-! Version: 20181002005757
+! Checksum: 1ZrLdF6THGAnPVFZU7+m0Q
+! Version: 20181118214955
 ! Title: Refreshing Tieba's Additional List
 ! Expires: 10 days
 ! Homepage: https://github.com/8qwe24657913/RefreshingTieba
