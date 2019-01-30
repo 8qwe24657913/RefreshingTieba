@@ -97,6 +97,10 @@ games
 interview
 tpl
 post_guessing
+baidusearch
+daoliu
+skin_click
+showlist
 `);
 
 // 从模板中移除的元素
@@ -211,7 +215,7 @@ const scriptBlackList = [
     '(' + [...Object.entries(HOSTMAP)].reduce((prev, [http, https]) => prev.concat([http, https.slice(8)]), []).join('|') + ')/',
 ].map(rule => ('^https?://' + rule).replace(/(\.|\/)/g, '\\$1'));
 // 屏蔽后需要覆盖原方法的模块
-function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
+function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService) {
     'use strict';
     return {
         block: {
@@ -345,6 +349,18 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                     t.favConfig.likeButton = $(e).appendTo(document.body).find('.fav-toolbar');
                 },
             },
+            'common/widget/PostService': {
+                initGeeTestService,
+            },
+            'pcommon/widget/PostService': {
+                initGeeTestService,
+            },
+            'pcommon/widget/SimplePoster': {
+                initGeeTestService,
+            },
+            'poster/widget/post_service': {
+                initGeeTestService,
+            },
         },
         hook: {
             'frs-list/widget/util_media_controller'(info) {
@@ -367,6 +383,23 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer) {
                         return orig.call(this, ...args).replace('autoplay="true"', 'autoplay="false"'); // 禁用 pb 页视频自动播放
                     };
                 }
+            },
+            'ppb/widget/sub_list/subListTotal'(info) {
+                const _getSubContent = info.sub._getSubContent;
+                info.sub._getSubContent = function(content) {
+                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', {...content});
+                    content.is_fold = 0; // 阻止 pb 页自动折叠楼中楼
+                    return _getSubContent.call(this, content);
+                };
+                info.sub._getAnchor = emptyStr;
+            },
+            'ppb/widget/sub_list/postTail'(info) {
+                const getPostTailTpl = info.sub.getPostTailTpl;
+                info.sub.getPostTailTpl = function(content, author) {
+                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', {...content}, author);
+                    content.is_fold = 0; // 阻止 pb 页自动折叠楼中楼
+                    return getPostTailTpl.call(this, content, author);
+                };
             },
             /*
             "message/widget/chat_content": function(info) {

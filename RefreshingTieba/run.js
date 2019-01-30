@@ -155,7 +155,26 @@ function inject(setting, getSpecialModules, toFastProperties) {
             return this._getCurrentTimeSec() * 1000;
         },
     };
-    const specialModules = getSpecialModules(noop, emptyStr, html5AudioPlayer);
+    function initGeeTestService() { // 延迟加载极验
+        console.log('[清爽贴吧]已延迟加载极验', this.__attr.modulePath);
+        if (window.jiyanService) return;
+        const that = this;
+        function verify() {
+            that.setJiyanCallback();
+            window.jiyanService.jiyanCaptcha.verify();
+        }
+        window.jiyanService = {
+            getJiyanChallenge: emptyStr,
+            jiyanCaptcha: {
+                verify() {
+                    window.jiyanService = that.requireInstance(window.PageData && String(window.PageData.page).includes('pb') ? 'pcommon/widget/JiyanService' : 'poster/widget/jiyan_service');
+                    window.jiyanService.getJiyanChallenge = emptyStr;
+                    window.jiyanService.jiyanCaptcha ? verify() : window.jiyanService.onValidateReady(verify);
+                }
+            },
+        };
+    }
+    const specialModules = getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService);
     // Logging
     let logBlocked, logPassed;
     if (!debugMode) {
@@ -343,6 +362,30 @@ function inject(setting, getSpecialModules, toFastProperties) {
             },
         });
         Module.use('common/widget/RefreshingTieba');
+        /*
+        hijack(window.F, 'module', module => {
+            const defined = new Set();
+            const fakeFn = Object.freeze(() => noop);
+            function fakeDefine(path) {
+                return module.call(F, path, fakeFn, []);
+            }
+            hijack(window.F, 'require', require => {
+                return function(path, ...args) {
+                    if (!defined.has(path)) fakeDefine(path);
+                    return require.call(this, path, ...args);
+                };
+            });
+            return function (path, fn, arr) {
+                defined.add(path);
+                let wrappedFn;
+                if (hasSensitiveWords(String(path))) wrappedFn = fakeFn;
+                else wrappedFn = function (require, wtf) {
+                    return fn.call(this, F.require, wtf);
+                };
+                return module.call(F, path, wrappedFn, arr);
+            };
+        });
+        */
 
         function check(module) { // 放行返回true
             if (moduleBlackList.includes(module) || hasSensitiveWords(module) && !moduleWhiteList.includes(module) || specialModules.block[module]) {
@@ -477,21 +520,6 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 }
                 super(config);
             }
-        });
-        // 贴吧会折叠一些帖子
-        hijack($.fn, 'getData', getData => function(...args) {
-            const res = getData.call(this, ...args);
-            if (res && res.content && res.content.is_fold && this.hasClass('l_post')) {
-                console.log('[清爽贴吧]已阻止自动折叠：', res.content.is_fold, res);
-                res.content.is_fold = 0;
-                this.get(0).dataset.field = JSON.stringify(res);
-                const tip = this.find('.p_forbidden_tip');
-                if (tip.length) {
-                    tip.get(0).firstChild.data += '(然而又被我清爽贴吧展开了！没想到吧.jpg) ';
-                    tip.find('.p_forbidden_post_content_fold').click();
-                }
-            }
-            return res;
         });
         // wtf???  奇奇怪怪的bug处理
         hijack($.fn, 'offset', offset => function(...args) {
