@@ -276,6 +276,8 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
         override: {
             'frs-list/pagelet/thread_list': {
                 checkLogin: noop,
+                threadEasterEggsTrack: noop,
+                bindJoinVipStat: noop,
             },
             'puser/widget/sign_mod_bright': {
                 handlePrintFlower: noop,

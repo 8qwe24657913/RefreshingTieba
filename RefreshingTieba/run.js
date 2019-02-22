@@ -170,7 +170,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
                     window.jiyanService = that.requireInstance(window.PageData && String(window.PageData.page).includes('pb') ? 'pcommon/widget/JiyanService' : 'poster/widget/jiyan_service');
                     window.jiyanService.getJiyanChallenge = emptyStr;
                     window.jiyanService.jiyanCaptcha ? verify() : window.jiyanService.onValidateReady(verify);
-                }
+                },
             },
         };
     }
@@ -362,30 +362,6 @@ function inject(setting, getSpecialModules, toFastProperties) {
             },
         });
         Module.use('common/widget/RefreshingTieba');
-        /*
-        hijack(window.F, 'module', module => {
-            const defined = new Set();
-            const fakeFn = Object.freeze(() => noop);
-            function fakeDefine(path) {
-                return module.call(F, path, fakeFn, []);
-            }
-            hijack(window.F, 'require', require => {
-                return function(path, ...args) {
-                    if (!defined.has(path)) fakeDefine(path);
-                    return require.call(this, path, ...args);
-                };
-            });
-            return function (path, fn, arr) {
-                defined.add(path);
-                let wrappedFn;
-                if (hasSensitiveWords(String(path))) wrappedFn = fakeFn;
-                else wrappedFn = function (require, wtf) {
-                    return fn.call(this, F.require, wtf);
-                };
-                return module.call(F, path, wrappedFn, arr);
-            };
-        });
-        */
 
         function check(module) { // 放行返回true
             if (moduleBlackList.includes(module) || hasSensitiveWords(module) && !moduleWhiteList.includes(module) || specialModules.block[module]) {
@@ -557,6 +533,40 @@ function inject(setting, getSpecialModules, toFastProperties) {
             fixProp(user, 'no_un', 0);
         });
         hijack(PageData, 'thread.is_ad', () => 0);
+    });
+    // auto link
+    hijack(window, 'UE.plugins.autolink', () => function() {
+        this.addOutputRule(parent => {
+            $.each(parent.getNodesByTagName('a'), (t, link) => {
+                const r = link.innerText();
+                if (!/^\w+:\/\//.test(r)) link.setAttr('href', 'http://' + r);
+                link.setAttr('target', '_blank');
+            });
+            const textNodes = [];
+            parent.traversal(node => {
+                node.type == 'text' && node.parentNode.tagName != 'a' && textNodes.push(node);
+            });
+            for (let textNode of textNodes) {
+                let content = textNode.getData().replace(/&#39;/g, '\'').replace(/&quot;/g, '"'),
+                    arr = content.split(/(?:^|\b)((?:https?|mms|rtsp|ftp):\/\/[0-9a-zA-Z;\.\!\~\#\?\:\/\&\%\-\+\*\=\@\_\$]+)(?:$|\b)/gi);
+                if (arr.length <= 1) continue;
+                const parentNode = textNode.parentNode;
+                for (let [index, text] of arr.entries()) {
+                    let newNode;
+                    if (index % 2 === 0) {
+                        if (!text) continue;
+                        newNode = UE.uNode.createText(text);
+                    } else {
+                        newNode = UE.uNode.createElement('a');
+                        newNode.setAttr('href', /^\w+:\/\//.test(text) ? text : 'http://' + text)
+                        newNode.setAttr('target', '_blank');
+                        newNode.innerText(text);
+                    }
+                    parentNode.insertBefore(newNode, textNode);
+                }
+                parentNode.removeChild(textNode)
+            }
+        }, true)
     });
     // 阻止特定脚本动态加载
     const originalSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
