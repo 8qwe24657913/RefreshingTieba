@@ -155,7 +155,26 @@ function inject(setting, getSpecialModules, toFastProperties) {
             return this._getCurrentTimeSec() * 1000;
         },
     };
-    const specialModules = getSpecialModules(noop, emptyStr, html5AudioPlayer);
+    function initGeeTestService() { // 延迟加载极验
+        console.log('[清爽贴吧]已延迟加载极验', this.__attr.modulePath);
+        if (window.jiyanService) return;
+        const that = this;
+        function verify() {
+            that.setJiyanCallback();
+            window.jiyanService.jiyanCaptcha.verify();
+        }
+        window.jiyanService = {
+            getJiyanChallenge: emptyStr,
+            jiyanCaptcha: {
+                verify() {
+                    window.jiyanService = that.requireInstance(window.PageData && String(window.PageData.page).includes('pb') ? 'pcommon/widget/JiyanService' : 'poster/widget/jiyan_service');
+                    window.jiyanService.getJiyanChallenge = emptyStr;
+                    window.jiyanService.jiyanCaptcha ? verify() : window.jiyanService.onValidateReady(verify);
+                },
+            },
+        };
+    }
+    const specialModules = getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService);
     // Logging
     let logBlocked, logPassed;
     if (!debugMode) {
@@ -328,7 +347,36 @@ function inject(setting, getSpecialModules, toFastProperties) {
     });
     // 模块过滤
     hijack(window, '_.Module', Module => {
-        let _requireInstance;
+        F.module("common/widget/paypost_data", function(n, t) {
+            var e = {}, o = null, u = function() {};
+            u.prototype = {
+                set(n, t) {
+                    return e[n] = t, !0;
+                },
+                get(n) {
+                    return e[n] ? e[n] : null;
+                },
+            },
+            u.getInstance = function() {
+                return o || (o = new u), o;
+            },
+            t.getInstance = u.getInstance;
+        }, []);
+        let /*_require, */_requireInstance;
+        /*
+        function FFilter(path) {
+            return check(path) || (F.module(path, specialModules.F[path] || function(...args){console.log(path,this,...args);return class{}}, []), false);
+        }
+        const require = function(path) {
+            FFilter(path);
+            return _require.call(this, path);
+        };
+        require.async = function (path, callback) {
+            if (typeof path === 'string') path = [path];
+            path.forEach(FFilter);
+            return _require.async.call(this, path, callback);
+        }
+        */
         const requireInstance = function(path, params) {
             moduleFilter(path);
             return _requireInstance.call(this, path, params);
@@ -338,11 +386,36 @@ function inject(setting, getSpecialModules, toFastProperties) {
             path: 'common/widget/RefreshingTieba',
             sub: {
                 initial() {
+                    //_require = this.require;
                     _requireInstance = this.requireInstance;
                 },
             },
         });
         Module.use('common/widget/RefreshingTieba');
+        /*
+        hijack(window.F, 'module', module => {
+            const defined = new Set();
+            const fakeFn = Object.freeze(() => noop);
+            function fakeDefine(path) {
+                return module.call(F, path, fakeFn, []);
+            }
+            hijack(window.F, 'require', require => {
+                return function(path, ...args) {
+                    if (!defined.has(path)) fakeDefine(path);
+                    return require.call(this, path, ...args);
+                };
+            });
+            return function (path, fn, arr) {
+                defined.add(path);
+                let wrappedFn;
+                if (hasSensitiveWords(String(path))) wrappedFn = fakeFn;
+                else wrappedFn = function (require, wtf) {
+                    return fn.call(this, F.require, wtf);
+                };
+                return module.call(F, path, wrappedFn, arr);
+            };
+        });
+        */
 
         function check(module) { // 放行返回true
             if (moduleBlackList.includes(module) || hasSensitiveWords(module) && !moduleWhiteList.includes(module) || specialModules.block[module]) {
@@ -386,7 +459,6 @@ function inject(setting, getSpecialModules, toFastProperties) {
             }
             const sub = {
                 initial: createInitial(path), // 不用同一个initial，因为这上面会被做标记
-                requireInstance,
             };
             const overrider = specialModules.block[path];
             if (overrider) Object.assign(sub, overrider);
@@ -418,7 +490,14 @@ function inject(setting, getSpecialModules, toFastProperties) {
             if (specialModules.hook[info.path]) specialModules.hook[info.path](info);
             const overrider = specialModules.override[info.path];
             if (overrider) Object.assign(info.sub, overrider);
-            info.sub.requireInstance = requireInstance;
+            /*
+            const initial = info.sub.initial;
+            info.sub.initial = function (...args) {
+                this.require = require;
+                if (typeof initial === 'function') return initial.call(this, ...args);
+            };
+            */
+            if (!info.sub.requireInstance) info.sub.requireInstance = requireInstance;
             defined.set(info.path, overrider ? DEFINED_STATES.OVERRIDED : DEFINED_STATES.PASSED);
             if (debugMode) logPassed(info.path);
             return _define.call(Module, info);
@@ -478,21 +557,6 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 super(config);
             }
         });
-        // 贴吧会折叠一些帖子
-        hijack($.fn, 'getData', getData => function(...args) {
-            const res = getData.call(this, ...args);
-            if (res && res.content && res.content.is_fold && this.hasClass('l_post')) {
-                console.log('[清爽贴吧]已阻止自动折叠：', res.content.is_fold, res);
-                res.content.is_fold = 0;
-                this.get(0).dataset.field = JSON.stringify(res);
-                const tip = this.find('.p_forbidden_tip');
-                if (tip.length) {
-                    tip.get(0).firstChild.data += '(然而又被我清爽贴吧展开了！没想到吧.jpg) ';
-                    tip.find('.p_forbidden_post_content_fold').click();
-                }
-            }
-            return res;
-        });
         // wtf???  奇奇怪怪的bug处理
         hijack($.fn, 'offset', offset => function(...args) {
             const res = offset.call(this, ...args);
@@ -529,6 +593,40 @@ function inject(setting, getSpecialModules, toFastProperties) {
             fixProp(user, 'no_un', 0);
         });
         hijack(PageData, 'thread.is_ad', () => 0);
+    });
+    // auto link
+    hijack(window, 'UE.plugins.autolink', () => function() {
+        this.addOutputRule(parent => {
+            $.each(parent.getNodesByTagName('a'), (t, link) => {
+                const r = link.innerText();
+                if (!/^\w+:\/\//.test(r)) link.setAttr('href', 'http://' + r);
+                link.setAttr('target', '_blank');
+            });
+            const textNodes = [];
+            parent.traversal(node => {
+                node.type == 'text' && node.parentNode.tagName != 'a' && textNodes.push(node);
+            });
+            for (let textNode of textNodes) {
+                let content = textNode.getData().replace(/&#39;/g, '\'').replace(/&quot;/g, '"'),
+                    arr = content.split(/(?:^|\b)((?:https?|mms|rtsp|ftp):\/\/[0-9a-zA-Z;\.\!\~\#\?\:\/\&\%\-\+\*\=\@\_\$]+)(?:$|\b)/gi);
+                if (arr.length <= 1) continue;
+                const parentNode = textNode.parentNode;
+                for (let [index, text] of arr.entries()) {
+                    let newNode;
+                    if (index % 2 === 0) {
+                        if (!text) continue;
+                        newNode = UE.uNode.createText(text);
+                    } else {
+                        newNode = UE.uNode.createElement('a');
+                        newNode.setAttr('href', /^\w+:\/\//.test(text) ? text : 'http://' + text)
+                        newNode.setAttr('target', '_blank');
+                        newNode.innerText(text);
+                    }
+                    parentNode.insertBefore(newNode, textNode);
+                }
+                parentNode.removeChild(textNode)
+            }
+        }, true)
     });
     // 阻止特定脚本动态加载
     const originalSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');

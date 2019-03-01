@@ -96,6 +96,17 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .carousel_promotion_replacement,
 .save_face_card + .fisfbb, /* "快试试吧，可以对自己使用挽尊卡咯~" 的提示 */
 .mobile_res,
+.j_begcard,
+.showlist_wap,
+#selectsearch-icon,
+#branding_ads,
+#fixed_daoliu,
+.com_skinad_left,
+.com_skinad_right,
+.showlist_wap,
+#novel-ranking,
+.novel-award-aside-area,
+.tbui_fbar_feedback,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
     display: none!important;
@@ -123,6 +134,14 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .l_post:not([data-field]) /*广告*/
 {
     display: none!important;
+}
+
+/*阻止折叠帖子*/
+.p_forbidden_tip {
+    display: none!important;
+}
+.p_forbidden_tip + .d_post_content {
+    display: block!important;
 }
 
 

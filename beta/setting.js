@@ -98,7 +98,13 @@ interview
 tpl
 post_guessing
 baidusearch
+<<<<<<< HEAD
 beg_card
+=======
+daoliu
+skin_click
+showlist
+>>>>>>> origin/master
 `);
 
 // 从模板中移除的元素
@@ -274,6 +280,8 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
         override: {
             'frs-list/pagelet/thread_list': {
                 checkLogin: noop,
+                threadEasterEggsTrack: noop,
+                bindJoinVipStat: noop,
             },
             'puser/widget/sign_mod_bright': {
                 handlePrintFlower: noop,
@@ -347,6 +355,18 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
                     t.favConfig.likeButton = $(e).appendTo(document.body).find('.fav-toolbar');
                 },
             },
+            'common/widget/PostService': {
+                initGeeTestService,
+            },
+            'pcommon/widget/PostService': {
+                initGeeTestService,
+            },
+            'pcommon/widget/SimplePoster': {
+                initGeeTestService,
+            },
+            'poster/widget/post_service': {
+                initGeeTestService,
+            },
         },
         hook: {
             'frs-list/widget/util_media_controller' (info) {
@@ -370,19 +390,19 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
                     };
                 }
             },
-            'ppb/widget/sub_list/subListTotal' (info) {
+            'ppb/widget/sub_list/subListTotal'(info) {
                 const _getSubContent = info.sub._getSubContent;
                 info.sub._getSubContent = function(content) {
-                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', { ...content });
+                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', {...content});
                     content.is_fold = 0; // 阻止 pb 页自动折叠楼中楼
                     return _getSubContent.call(this, content);
                 };
                 info.sub._getAnchor = emptyStr;
             },
-            'ppb/widget/sub_list/postTail' (info) {
+            'ppb/widget/sub_list/postTail'(info) {
                 const getPostTailTpl = info.sub.getPostTailTpl;
                 info.sub.getPostTailTpl = function(content, author) {
-                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', { ...content }, author);
+                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', {...content}, author);
                     content.is_fold = 0; // 阻止 pb 页自动折叠楼中楼
                     return getPostTailTpl.call(this, content, author);
                 };

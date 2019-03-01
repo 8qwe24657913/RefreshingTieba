@@ -164,12 +164,14 @@ function inject(setting, getSpecialModules, toFastProperties) {
             window.jiyanService.jiyanCaptcha.verify();
         }
         window.jiyanService = {
+            getJiyanChallenge: emptyStr,
             jiyanCaptcha: {
                 verify() {
-                    window.jiyanService = that.requireInstance("common/widget/JiyanService");
+                    window.jiyanService = that.requireInstance(window.PageData && String(window.PageData.page).includes('pb') ? 'pcommon/widget/JiyanService' : 'poster/widget/jiyan_service');
+                    window.jiyanService.getJiyanChallenge = emptyStr;
                     window.jiyanService.jiyanCaptcha ? verify() : window.jiyanService.onValidateReady(verify);
-                }
-            }
+                },
+            },
         };
     }
     const specialModules = getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService);
@@ -591,6 +593,40 @@ function inject(setting, getSpecialModules, toFastProperties) {
             fixProp(user, 'no_un', 0);
         });
         hijack(PageData, 'thread.is_ad', () => 0);
+    });
+    // auto link
+    hijack(window, 'UE.plugins.autolink', () => function() {
+        this.addOutputRule(parent => {
+            $.each(parent.getNodesByTagName('a'), (t, link) => {
+                const r = link.innerText();
+                if (!/^\w+:\/\//.test(r)) link.setAttr('href', 'http://' + r);
+                link.setAttr('target', '_blank');
+            });
+            const textNodes = [];
+            parent.traversal(node => {
+                node.type == 'text' && node.parentNode.tagName != 'a' && textNodes.push(node);
+            });
+            for (let textNode of textNodes) {
+                let content = textNode.getData().replace(/&#39;/g, '\'').replace(/&quot;/g, '"'),
+                    arr = content.split(/(?:^|\b)((?:https?|mms|rtsp|ftp):\/\/[0-9a-zA-Z;\.\!\~\#\?\:\/\&\%\-\+\*\=\@\_\$]+)(?:$|\b)/gi);
+                if (arr.length <= 1) continue;
+                const parentNode = textNode.parentNode;
+                for (let [index, text] of arr.entries()) {
+                    let newNode;
+                    if (index % 2 === 0) {
+                        if (!text) continue;
+                        newNode = UE.uNode.createText(text);
+                    } else {
+                        newNode = UE.uNode.createElement('a');
+                        newNode.setAttr('href', /^\w+:\/\//.test(text) ? text : 'http://' + text)
+                        newNode.setAttr('target', '_blank');
+                        newNode.innerText(text);
+                    }
+                    parentNode.insertBefore(newNode, textNode);
+                }
+                parentNode.removeChild(textNode)
+            }
+        }, true)
     });
     // 阻止特定脚本动态加载
     const originalSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
