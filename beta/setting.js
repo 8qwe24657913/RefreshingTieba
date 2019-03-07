@@ -363,6 +363,9 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
             'poster/widget/post_service': {
                 initGeeTestService,
             },
+            'common/widget/SimplePoster': {
+                initGeeTestService,
+            },
         },
         hook: {
             'frs-list/widget/util_media_controller'(info) {

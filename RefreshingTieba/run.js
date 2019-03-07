@@ -155,21 +155,40 @@ function inject(setting, getSpecialModules, toFastProperties) {
             return this._getCurrentTimeSec() * 1000;
         },
     };
+    let hookedGeeTest = false;
     function initGeeTestService() { // 延迟加载极验
         console.log('[清爽贴吧]已延迟加载极验', this.__attr.modulePath);
-        if (window.jiyanService) return;
-        const that = this;
-        function verify() {
-            that.setJiyanCallback();
+        const setCallback = () => this.setJiyanCallback();
+        if (window.jiyanService) {
+            if (hookedGeeTest || !window.jiyanService.jiyanCaptcha) {
+                window.jiyanService.onValidateReady(setCallback)
+            } else {
+                setCallback();
+            }
+            return;
+        }
+        hookedGeeTest = true;
+        const initList = [setCallback];
+        function verifyHook() {
+            for (let init of initList) {
+                init();
+            }
             window.jiyanService.jiyanCaptcha.verify();
         }
         window.jiyanService = {
             getJiyanChallenge: emptyStr,
+            onValidateInitError: noop,
+            onValidateAjaxError: noop,
+            onValidateClose: noop,
+            onValidateSuccess: noop,
+            onValidateError: noop,
+            onValidateReady: fn => initList.push(fn),
             jiyanCaptcha: {
                 verify() {
                     window.jiyanService = that.requireInstance(window.PageData && String(window.PageData.page).includes('pb') ? 'pcommon/widget/JiyanService' : 'poster/widget/jiyan_service');
+                    hookedGeeTest = false;
                     window.jiyanService.getJiyanChallenge = emptyStr;
-                    window.jiyanService.jiyanCaptcha ? verify() : window.jiyanService.onValidateReady(verify);
+                    window.jiyanService.jiyanCaptcha ? verifyHook() : window.jiyanService.onValidateReady(verifyHook);
                 },
             },
         };
@@ -433,6 +452,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
                     console.warn('[清爽贴吧]遇到问题：未知的requires字段', info);
                 }
             }
+            if (info.sub.initGeeTestService) info.sub.initGeeTestService = initGeeTestService; // PostService 和 SimplePoster 有点多，先临时补一下
             if (info.extend) moduleFilter(info.extend);
             if (specialModules.hook[info.path]) specialModules.hook[info.path](info);
             const overrider = specialModules.override[info.path];
