@@ -98,9 +98,13 @@ interview
 tpl
 post_guessing
 baidusearch
+<<<<<<< HEAD
+beg_card
+=======
 daoliu
 skin_click
 showlist
+>>>>>>> origin/master
 `);
 
 // 从模板中移除的元素
@@ -368,14 +372,14 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
             },
         },
         hook: {
-            'frs-list/widget/util_media_controller'(info) {
+            'frs-list/widget/util_media_controller' (info) {
                 const render = info.sub.render;
                 info.sub.render = function(config) {
                     config.videoAutoPlay = 0; // 禁用 frs 页视频自动播放
                     return render.call(this, config);
                 };
             },
-            'ppb/widget/NoAutoVideo'(info) {
+            'ppb/widget/NoAutoVideo' (info) {
                 const render = info.sub.render;
                 info.sub.render = function(config) {
                     config.can_auto_play = 0; // 禁用 pb 页视频自动播放

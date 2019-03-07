@@ -366,7 +366,36 @@ function inject(setting, getSpecialModules, toFastProperties) {
     });
     // 模块过滤
     hijack(window, '_.Module', Module => {
-        let _requireInstance;
+        F.module("common/widget/paypost_data", function(n, t) {
+            var e = {}, o = null, u = function() {};
+            u.prototype = {
+                set(n, t) {
+                    return e[n] = t, !0;
+                },
+                get(n) {
+                    return e[n] ? e[n] : null;
+                },
+            },
+            u.getInstance = function() {
+                return o || (o = new u), o;
+            },
+            t.getInstance = u.getInstance;
+        }, []);
+        let /*_require, */_requireInstance;
+        /*
+        function FFilter(path) {
+            return check(path) || (F.module(path, specialModules.F[path] || function(...args){console.log(path,this,...args);return class{}}, []), false);
+        }
+        const require = function(path) {
+            FFilter(path);
+            return _require.call(this, path);
+        };
+        require.async = function (path, callback) {
+            if (typeof path === 'string') path = [path];
+            path.forEach(FFilter);
+            return _require.async.call(this, path, callback);
+        }
+        */
         const requireInstance = function(path, params) {
             moduleFilter(path);
             return _requireInstance.call(this, path, params);
@@ -376,11 +405,36 @@ function inject(setting, getSpecialModules, toFastProperties) {
             path: 'common/widget/RefreshingTieba',
             sub: {
                 initial() {
+                    //_require = this.require;
                     _requireInstance = this.requireInstance;
                 },
             },
         });
         Module.use('common/widget/RefreshingTieba');
+        /*
+        hijack(window.F, 'module', module => {
+            const defined = new Set();
+            const fakeFn = Object.freeze(() => noop);
+            function fakeDefine(path) {
+                return module.call(F, path, fakeFn, []);
+            }
+            hijack(window.F, 'require', require => {
+                return function(path, ...args) {
+                    if (!defined.has(path)) fakeDefine(path);
+                    return require.call(this, path, ...args);
+                };
+            });
+            return function (path, fn, arr) {
+                defined.add(path);
+                let wrappedFn;
+                if (hasSensitiveWords(String(path))) wrappedFn = fakeFn;
+                else wrappedFn = function (require, wtf) {
+                    return fn.call(this, F.require, wtf);
+                };
+                return module.call(F, path, wrappedFn, arr);
+            };
+        });
+        */
 
         function check(module) { // 放行返回true
             if (moduleBlackList.includes(module) || hasSensitiveWords(module) && !moduleWhiteList.includes(module) || specialModules.block[module]) {
@@ -424,7 +478,6 @@ function inject(setting, getSpecialModules, toFastProperties) {
             }
             const sub = {
                 initial: createInitial(path), // 不用同一个initial，因为这上面会被做标记
-                requireInstance,
             };
             const overrider = specialModules.block[path];
             if (overrider) Object.assign(sub, overrider);
@@ -457,7 +510,14 @@ function inject(setting, getSpecialModules, toFastProperties) {
             if (specialModules.hook[info.path]) specialModules.hook[info.path](info);
             const overrider = specialModules.override[info.path];
             if (overrider) Object.assign(info.sub, overrider);
-            info.sub.requireInstance = requireInstance;
+            /*
+            const initial = info.sub.initial;
+            info.sub.initial = function (...args) {
+                this.require = require;
+                if (typeof initial === 'function') return initial.call(this, ...args);
+            };
+            */
+            if (!info.sub.requireInstance) info.sub.requireInstance = requireInstance;
             defined.set(info.path, overrider ? DEFINED_STATES.OVERRIDED : DEFINED_STATES.PASSED);
             if (debugMode) logPassed(info.path);
             return _define.call(Module, info);
