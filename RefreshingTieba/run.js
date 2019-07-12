@@ -156,6 +156,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
         },
     };
     let hookedGeeTest = false;
+
     function initGeeTestService() { // 延迟加载极验
         console.log('[清爽贴吧]已延迟加载极验', this.__attr.modulePath);
         const setCallback = () => this.setJiyanCallback();
@@ -169,8 +170,9 @@ function inject(setting, getSpecialModules, toFastProperties) {
         }
         hookedGeeTest = true;
         const initList = [setCallback];
+
         function verifyHook() {
-            for (let init of initList) {
+            for (const init of initList) {
                 init();
             }
             window.jiyanService.jiyanCaptcha.verify();
@@ -366,8 +368,10 @@ function inject(setting, getSpecialModules, toFastProperties) {
     });
     // 模块过滤
     hijack(window, '_.Module', Module => {
-        F.module("common/widget/paypost_data", function(n, t) {
-            var e = {}, o = null, u = function() {};
+        F.module('common/widget/paypost_data', (n, t) => {
+            let e = {},
+                o = null,
+                u = function() {};
             u.prototype = {
                 set(n, t) {
                     return e[n] = t, !0;
@@ -377,11 +381,11 @@ function inject(setting, getSpecialModules, toFastProperties) {
                 },
             },
             u.getInstance = function() {
-                return o || (o = new u), o;
+                return o || (o = new u()), o;
             },
             t.getInstance = u.getInstance;
         }, []);
-        let /*_require, */_requireInstance;
+        let /*_require, */ _requireInstance;
         /*
         function FFilter(path) {
             return check(path) || (F.module(path, specialModules.F[path] || function(...args){console.log(path,this,...args);return class{}}, []), false);
@@ -532,6 +536,7 @@ function inject(setting, getSpecialModules, toFastProperties) {
             writable: false,
         });
     }
+
     function setNoop(parent, name) {
         fixProp(parent, name, noop);
     }
@@ -542,10 +547,16 @@ function inject(setting, getSpecialModules, toFastProperties) {
     // 统计过滤
     setNoop(window, 'alog');
     setNoop(window, 'passFingerload');
+    setNoop(window, 'ad_manager_loadPic');
     hijack(window, 'PageLink', PageLink => {
         setNoop(PageLink, 'init');
         setNoop(PageLink, '_onclick');
     });
+    fixProp(window, 'bdShareTb', Object.freeze({
+        fn: Object.freeze({
+            init: noop,
+        }),
+    }));
     hijack(window, 'jQuery', $ => {
         // 写死一些统计函数，即使过滤掉 tb_stats_xxxxx.js 也能正常工作
         fixProp($, 'stats', {});
@@ -580,9 +591,11 @@ function inject(setting, getSpecialModules, toFastProperties) {
         // wtf???  奇奇怪怪的bug处理
         hijack($.fn, 'offset', offset => function(...args) {
             const res = offset.call(this, ...args);
-            if (!res && new Error().stack.includes('UserMessage.js')) {
-                $.fn.offset = offset;
+            if (res) return res;
+            const stack = new Error().stack
+            if (stack.includes('UserMessage.js') || stack.includes('post_list')) {
                 return {
+                    top: 0,
                     left: 0,
                 }
             }
@@ -626,12 +639,12 @@ function inject(setting, getSpecialModules, toFastProperties) {
             parent.traversal(node => {
                 node.type == 'text' && node.parentNode.tagName != 'a' && textNodes.push(node);
             });
-            for (let textNode of textNodes) {
-                let content = textNode.getData().replace(/&#39;/g, '\'').replace(/&quot;/g, '"'),
+            for (const textNode of textNodes) {
+                const content = textNode.getData().replace(/&#39;/g, '\'').replace(/&quot;/g, '"'),
                     arr = content.split(/(?:^|\b)((?:https?|mms|rtsp|ftp):\/\/[0-9a-zA-Z;\.\!\~\#\?\:\/\&\%\-\+\*\=\@\_\$]+)(?:$|\b)/gi);
                 if (arr.length <= 1) continue;
                 const parentNode = textNode.parentNode;
-                for (let [index, text] of arr.entries()) {
+                for (const [index, text] of arr.entries()) {
                     let newNode;
                     if (index % 2 === 0) {
                         if (!text) continue;
@@ -661,8 +674,10 @@ function inject(setting, getSpecialModules, toFastProperties) {
         const eventTypes = new Set('wheel,mousewheel,DOMMouseScroll,MozMousePixelScroll,scroll,touchstart,touchmove,touchend,touchcancel,mousemove'.split(','));
         hijack(prototype, 'addEventListener', _add => function(type, handler, capture) {
             if (!eventTypes.has(type) // 不需要强制 passive 的事件类型
-                || typeof capture !== 'boolean' // 已经规定了是否 passive
-                || new Error().stack.includes('eval') // 防止与 userscript 冲突
+                ||
+                typeof capture !== 'boolean' // 已经规定了是否 passive
+                ||
+                new Error().stack.includes('eval') // 防止与 userscript 冲突
             ) return _add.call(this, type, handler, capture);
             if (type === 'mousemove') return; // 监听这个的都是分享、XSS监控这种鸡肋玩意
             return _add.call(this, type, handler, {
@@ -722,6 +737,16 @@ const toFastProperties = `function toFastProperties(obj) {
             case 'ad_bottom_view':
                 const post = target.closest('.l_post');
                 if (post) post.remove();
+                break;
+            case 'process_kw1':
+                target.classList.add('process_kw1');
+                target.addEventListener('keydown', e => {
+                    if (e.keyCode === 13) {
+                        e.preventDefault()
+                        const enter = document.querySelector('.j_enter_ba')
+                        enter && enter.click()
+                    }
+                })
                 break;
         }
     }, false);

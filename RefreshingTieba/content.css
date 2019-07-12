@@ -20,7 +20,7 @@ a[href="/f?kw=%D3%A6%D3%C3%D6%D0%D0%C4&fr=userbar"],
 .guidance_fc,
 .content-ad,
 #aside_ad,
-#j_p_postlist > div[class="l_post l_post_bright j_l_post clearfix  "] + div:not([class="l_post l_post_bright j_l_post clearfix  "]),
+#j_p_postlist>div[class="l_post l_post_bright j_l_post clearfix  "]+div:not([class="l_post l_post_bright j_l_post clearfix  "]),
 .l_post[data-isautoreply],
 .post_bubble_top,
 .post_bubble_bottom,
@@ -38,7 +38,7 @@ a[href="/f?kw=%D3%A6%D3%C3%D6%D0%D0%C4&fr=userbar"],
 .u_extraurl,
 .u_tshow,
 .u_split,
-#com_userbar > ul > .split,
+#com_userbar>ul>.split,
 .tbui_fbar_bazhu,
 .tbui_fbar_props,
 .tbui_fbar_tsukkomi,
@@ -64,15 +64,15 @@ a[href="/f?kw=%D3%A6%D3%C3%D6%D0%D0%C4&fr=userbar"],
 #adide_platform,
 .r-right-sec,
 #video_aside,
-aside > .bazhu,
+aside>.bazhu,
 #j_navtab_game,
-.page404  .video-wrapper,
-.page404  .hot-wraper,
-.page404  #error_404_iframe,
+.page404 .video-wrapper,
+.page404 .hot-wraper,
+.page404 #error_404_iframe,
 .card_userinfo_marry,
-.right_section > div[class$="  "],
-#thread_list > .j_thread_list + li:not(.j_thread_list),
-.suggestion_list > li[data-field^="{\"sugType\":\"operation_"],
+.right_section>div[class$="  "],
+#thread_list>.j_thread_list+li:not(.j_thread_list),
+.suggestion_list>li[data-field^="{\"sugType\":\"operation_"],
 .bdfengyun,
 .tbsug_expand .tbsug_tip,
 #video_frs_head,
@@ -87,14 +87,15 @@ aside > .bazhu,
 .app_download_box,
 a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .card_userinfo_guide,
-.userinfo_username + div[style]:not([class]):not([id]),
+.userinfo_username+div[style]:not([class]):not([id]),
 .crowdfunding-traveling-wrapper,
 .userinfo-marry,
 #banner_pb_customize,
 .post-foot-send-gift-container,
 .group_download_link_wrapper,
 .carousel_promotion_replacement,
-.save_face_card + .fisfbb, /* "快试试吧，可以对自己使用挽尊卡咯~" 的提示 */
+.save_face_card+.fisfbb,
+/* "快试试吧，可以对自己使用挽尊卡咯~" 的提示 */
 .mobile_res,
 .j_begcard,
 .showlist_wap,
@@ -106,58 +107,80 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 .showlist_wap,
 #novel-ranking,
 .novel-award-aside-area,
+#m1800_canvas,
+[class^="ec-"],
 .tbui_fbar_feedback,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
-    display: none!important;
+    display: none !important;
 }
 
 /*贴吧广告机器人*/
 /*这五个我看μblock屏蔽规则有就照抄了*/
-.l_post[data-field^="{\"author\":{\"user_id\":50012654,"], /*善良的小鸟 这个我也不知道什么鬼，大概是测试账号*/
-.l_post[data-field^="{\"author\":{\"user_id\":1990070693,"], /*贴吧触点推广*/
-.l_post[data-field^="{\"author\":{\"user_id\":1480194257,"], /*房产快讯大管家*/
-.l_post[data-field^="{\"author\":{\"user_id\":1480174042,"], /*房产小站长*/
-.l_post[data-field^="{\"author\":{\"user_id\":1224761005,"], /*房产速讯*/
+.l_post[data-field^="{\"author\":{\"user_id\":50012654,"],
+/*善良的小鸟 这个我也不知道什么鬼，大概是测试账号*/
+.l_post[data-field^="{\"author\":{\"user_id\":1990070693,"],
+/*贴吧触点推广*/
+.l_post[data-field^="{\"author\":{\"user_id\":1480194257,"],
+/*房产快讯大管家*/
+.l_post[data-field^="{\"author\":{\"user_id\":1480174042,"],
+/*房产小站长*/
+.l_post[data-field^="{\"author\":{\"user_id\":1224761005,"],
+/*房产速讯*/
 /*SB新年表情包，名单来自http://tieba.baidu.com/p/4945949828?pid=102814221827&cid=0#102814221827*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851596475,"], /*滑稽姐妹花*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617783,"], /*名侦探课难*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851591509,"], /*贴吧大叔叔*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617782,"], /*算命鸡爪*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617780,"], /*贴吧小姐姐*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851596473,"], /*鸡年歌友*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617778,"], /*主要是心灵美*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617777,"], /*秋名山第一名*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617779,"], /*贴吧小哥哥*/
-.l_post[data-field^="{\"author\":{\"user_id\":2852576200,"], /*天下大大稽*/
-.l_post[data-field^="{\"author\":{\"user_id\":2851617776,"], /*鸡年大财神*/
-.l_post:not([data-field]) /*广告*/
-{
-    display: none!important;
+.l_post[data-field^="{\"author\":{\"user_id\":2851596475,"],
+/*滑稽姐妹花*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617783,"],
+/*名侦探课难*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851591509,"],
+/*贴吧大叔叔*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617782,"],
+/*算命鸡爪*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617780,"],
+/*贴吧小姐姐*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851596473,"],
+/*鸡年歌友*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617778,"],
+/*主要是心灵美*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617777,"],
+/*秋名山第一名*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617779,"],
+/*贴吧小哥哥*/
+.l_post[data-field^="{\"author\":{\"user_id\":2852576200,"],
+/*天下大大稽*/
+.l_post[data-field^="{\"author\":{\"user_id\":2851617776,"],
+/*鸡年大财神*/
+.l_post:not([data-field])
+
+/*广告*/
+    {
+    display: none !important;
 }
 
 /*阻止折叠帖子*/
 .p_forbidden_tip {
-    display: none!important;
+    display: none !important;
 }
-.p_forbidden_tip + .d_post_content {
-    display: block!important;
+
+.p_forbidden_tip+.d_post_content {
+    display: block !important;
 }
 
 
 /*会员大老爷再见*/
 
 .post_bubble_middle {
-    background: none!important;
-    padding: 0!important;
-    width: auto!important;
-    overflow: auto!important;
+    background: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    overflow: auto !important;
 }
+
 .post_bubble_middle_inner {
-    background: none!important;
-    padding: 0!important;
-    width: auto!important;
-    overflow: auto!important;
+    background: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    overflow: auto !important;
 }
 
 html .red_text,
@@ -167,47 +190,51 @@ html .vip-red,
 html .vip_red:hover,
 html .vip-red:hover,
 html .vip_red:visited,
-html .vip-red:visited {
-    color: inherit!important;
+html .vip-red:visited,
+html .member_thread_title_pb {
+    color: inherit !important;
 }
 
 html .member_thread_title_frs a,
 html .member_thread_title_frs a:hover {
-    color: #2d64b3!important;
+    color: #2d64b3 !important;
 }
 
 html .member_thread_title_frs a:visited {
-    color: #653096!important;
+    color: #653096 !important;
 }
 
 .p_author_face.j_frame_guide {
-    background: none repeat scroll 0 0 #FFF!important;
-    border: 1px solid #CCC!important;
-    padding: 3px!important;
+    background: none repeat scroll 0 0 #FFF !important;
+    border: 1px solid #CCC !important;
+    padding: 3px !important;
 }
-.tail-info > a[href^="http://c.tieba.baidu.com/c/s/download/"],
+
+.tail-info>a[href^="http://c.tieba.baidu.com/c/s/download/"],
 a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
-    display: inline!important;
+    display: inline !important;
     pointer-events: none;
-    color: inherit!important;
+    color: inherit !important;
 }
 
 .official_head .head_banner {
-    cursor: auto!important;
+    cursor: auto !important;
 }
 
 
 /*奇怪的样式修复*/
 
 #headinfo_wrap {
-    margin-top: 0!important;
+    margin-top: 0 !important;
     height: 241px;
 }
+
 .tbui_aside_float_bar li.tbui_fbar_post {
-    margin-bottom: 5px!important;
+    margin-bottom: 5px !important;
 }
+
 .dialogJmodal {
-    position: fixed!important;
+    position: fixed !important;
 }
 
 
@@ -216,14 +243,15 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
 
 .r-left-sec,
 .r-left-sec .n_right {
-    width: 100%!important;
+    width: 100% !important;
 }
+
 /*神TM一个纯色导航条竟然是用图片当背景的……而且还不够长……*/
 .r-left-sec #sub_nav_wrap {
-    background: #f8f8f8!important;
+    background: #f8f8f8 !important;
     box-shadow: 0 0 0 1px #fdfdfd, 0 0 0 2px #e2e2e2, 1px 1px 0 2px #e7e7e7;
     margin: 3px;
-    width: 774px!important;
+    width: 774px !important;
 }
 
 
@@ -233,14 +261,15 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     from {
         clip: rect(1px, auto, auto, auto);
     }
+
     to {
         clip: rect(0px, auto, auto, auto);
     }
 }
 
 .app_forum_top_nav {
-    display: block!important;
-    visibility: hidden!important;
+    display: block !important;
+    visibility: hidden !important;
     animation-duration: 0.001s;
     animation-name: ads_need_remove;
     pointer-events: none;
@@ -251,12 +280,14 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     from {
         clip: rect(1px, auto, auto, auto);
     }
+
     to {
         clip: rect(0px, auto, auto, auto);
     }
 }
 
-.ps_cb, .comforum-swap-words {
+.ps_cb,
+.comforum-swap-words {
     animation-duration: 0.001s;
     animation-name: ps_cb_ad;
     pointer-events: none;
@@ -268,6 +299,7 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     from {
         clip: rect(1px, auto, auto, auto);
     }
+
     to {
         clip: rect(0px, auto, auto, auto);
     }
@@ -283,6 +315,7 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
     from {
         clip: rect(1px, auto, auto, auto);
     }
+
     to {
         clip: rect(0px, auto, auto, auto);
     }
@@ -291,4 +324,20 @@ a.p_tail_wap[href^="http://c.tieba.baidu.com/c/s/download/"] {
 .ad_bottom_view {
     animation-duration: 0.001s;
     animation-name: ad_bottom_view;
+}
+
+/*搜索时回车*/
+@keyframes process_kw1 {
+    from {
+        clip: rect(1px, auto, auto, auto);
+    }
+
+    to {
+        clip: rect(0px, auto, auto, auto);
+    }
+}
+
+[name="kw1"]:not(.process_kw1) {
+    animation-duration: 0.001s;
+    animation-name: process_kw1;
 }

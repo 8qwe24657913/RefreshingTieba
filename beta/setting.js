@@ -98,13 +98,12 @@ interview
 tpl
 post_guessing
 baidusearch
-<<<<<<< HEAD
 beg_card
-=======
 daoliu
 skin_click
 showlist
->>>>>>> origin/master
+ad_manager
+ad
 `);
 
 // 从模板中移除的元素
@@ -207,10 +206,12 @@ const HOSTMAP = {
     'ecmb.bdimg.com': 'https://ss0.bdstatic.com/-0U0bnSm1A5BphGlnYG',
 };
 const scriptBlackList = [
+    'gss0.baidu.com/6qVSsjikBxIFlNKl8IuM_a/',
     'fex.bdstatic.com/hunter/alog/',
     'passport.baidu.com/static/passpc-base/js/(dv/8|ld|fld).min.js(\\?|$)',
     'passport.baidu.com/static/passpc-account/js/module/fingerload.js(\\?|$)',
     'hm.baidu.com/',
+    'dlswbr.baidu.com/', // 采用包括但不限于 canvas 指纹，WebRTC 获取真实 IP 等方法搜集用户隐私
     'img.baidu.com/hunter/',
     'xiangce.baidu.com/public_home/api/checkshow\\?', // 一个根本不存在的API……
     'afd.baidu.com/',
@@ -372,14 +373,14 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
             },
         },
         hook: {
-            'frs-list/widget/util_media_controller' (info) {
+            'frs-list/widget/util_media_controller'(info) {
                 const render = info.sub.render;
                 info.sub.render = function(config) {
                     config.videoAutoPlay = 0; // 禁用 frs 页视频自动播放
                     return render.call(this, config);
                 };
             },
-            'ppb/widget/NoAutoVideo' (info) {
+            'ppb/widget/NoAutoVideo'(info) {
                 const render = info.sub.render;
                 info.sub.render = function(config) {
                     config.can_auto_play = 0; // 禁用 pb 页视频自动播放
@@ -396,7 +397,11 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
             'ppb/widget/sub_list/subListTotal'(info) {
                 const _getSubContent = info.sub._getSubContent;
                 info.sub._getSubContent = function(content) {
-                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', {...content});
+                    if (content.is_fold) {
+                        console.log('[清爽贴吧]已阻止自动折叠：', {
+                            ...content,
+                        });
+                    }
                     content.is_fold = 0; // 阻止 pb 页自动折叠楼中楼
                     return _getSubContent.call(this, content);
                 };
@@ -405,7 +410,11 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
             'ppb/widget/sub_list/postTail'(info) {
                 const getPostTailTpl = info.sub.getPostTailTpl;
                 info.sub.getPostTailTpl = function(content, author) {
-                    if (content.is_fold) console.log('[清爽贴吧]已阻止自动折叠：', {...content}, author);
+                    if (content.is_fold) {
+                        console.log('[清爽贴吧]已阻止自动折叠：', {
+                            ...content,
+                        }, author);
+                    }
                     content.is_fold = 0; // 阻止 pb 页自动折叠楼中楼
                     return getPostTailTpl.call(this, content, author);
                 };
