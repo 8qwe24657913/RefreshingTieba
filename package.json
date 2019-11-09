@@ -1,0 +1,38 @@
+{
+  "name": "refreshingtieba",
+  "version": "1.0.0",
+  "description": "refreshing tieba",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/8qwe24657913/RefreshingTieba.git"
+  },
+  "keywords": [
+    "tieba"
+  ],
+  "author": "8q",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/8qwe24657913/RefreshingTieba/issues"
+  },
+  "homepage": "https://github.com/8qwe24657913/RefreshingTieba",
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.6.0",
+    "eslint-config-babel": "^9.0.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-flowtype": "^4.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "prettier": "^1.19.0",
+    "prettier-eslint": "^9.0.0",
+    "prettier-eslint-cli": "^5.0.0"
+  },
+  "dependencies": {},
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}
