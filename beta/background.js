@@ -8,25 +8,25 @@ const resourceType = ['script', 'stylesheet']
 
 // 去除部分脚本/样式
 const extractionRule = {
-  id: 'extractionRule',
-  priority: 3,
-  conditions: [
-    new chrome.declarativeWebRequest.RequestMatcher({
-      url: {
-        hostEquals,
-        pathEquals,
-        queryPrefix,
-        urlMatches,
-      },
-      resourceType,
-    }),
-  ],
-  actions: [
-    new chrome.declarativeWebRequest.RedirectByRegEx({
-      from: urlMatches,
-      to: '',
-    }),
-  ],
+    id: 'extractionRule',
+    priority: 3,
+    conditions: [
+        new chrome.declarativeWebRequest.RequestMatcher({
+            url: {
+                hostEquals,
+                pathEquals,
+                queryPrefix,
+                urlMatches,
+            },
+            resourceType,
+        }),
+    ],
+    actions: [
+        new chrome.declarativeWebRequest.RedirectByRegEx({
+            from: urlMatches,
+            to: '',
+        }),
+    ],
 }
 /*
 // 正确处理萃取结果最后有 "," 的情况（其实不处理似乎也没问题……
@@ -70,13 +70,10 @@ const helperRule2 = {
     ]
 };
 */
-chrome.declarativeWebRequest.onRequest.removeRules(
-  ['extractionRule', 'helperRule1', 'helperRule2'],
-  function() {
+chrome.declarativeWebRequest.onRequest.removeRules(['extractionRule', 'helperRule1', 'helperRule2'], function() {
     chrome.declarativeWebRequest.onRequest.addRules([
-      extractionRule,
-      // helperRule1,
-      // helperRule2,
+        extractionRule,
+        // helperRule1,
+        // helperRule2,
     ])
-  },
-)
+})

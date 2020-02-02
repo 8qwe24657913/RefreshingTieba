@@ -1,11 +1,11 @@
 /* exported split sensitiveWordsV2 */
 
 function orig(wtf) {
-  return wtf
+    return wtf
 }
 
 function split(str) {
-  return str.split('\n').filter(orig)
+    return str.split('\n').filter(orig)
 }
 
 // 通用模糊匹配，包含这个词就屏蔽

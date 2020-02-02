@@ -1,12 +1,25 @@
 {
-    "content_scripts": [{
-        "all_frames": true,
-        "js": ["common.js", "setting.js", "inject.js", "html5AudioPlayer.inject.js", "initGeeTestService.inject.js", "run.js"],
-        "css": ["content.css"],
-        "matches": ["http://tieba.baidu.com/*", "https://tieba.baidu.com/*"],
-        "exclude_globs": ["*://tieba.baidu.com/game/*", "*://tieba.baidu.com/tbmall/*", "*://tieba.baidu.com/tbvip/*"],
-        "run_at": "document_start"
-    }],
+    "content_scripts": [
+        {
+            "all_frames": true,
+            "js": [
+                "common.js",
+                "setting.js",
+                "inject.js",
+                "html5AudioPlayer.inject.js",
+                "initGeeTestService.inject.js",
+                "run.js"
+            ],
+            "css": ["content.css"],
+            "matches": ["http://tieba.baidu.com/*", "https://tieba.baidu.com/*"],
+            "exclude_globs": [
+                "*://tieba.baidu.com/game/*",
+                "*://tieba.baidu.com/tbmall/*",
+                "*://tieba.baidu.com/tbvip/*"
+            ],
+            "run_at": "document_start"
+        }
+    ],
     "description": "过滤贴吧的各种广告、无用的脚本和样式，提升加载速度，减少内存占用，附带免登录看帖，语音贴替换为 html5 播放等功能",
     "manifest_version": 2,
     "name": "清爽贴吧",

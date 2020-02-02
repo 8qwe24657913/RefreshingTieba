@@ -16,5 +16,6 @@ module.exports = {
     'comma-dangle': ['error', 'always-multiline'],
     'linebreak-style': ['error', 'unix'],
     'eol-last': ['error', 'always'],
+    indent: ['error', 4],
   },
 }
