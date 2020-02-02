@@ -1,6 +1,6 @@
 [Adblock Plus 2.0]
-! Checksum: AYr+wm7xsxE0EwwyMm1vnA
-! Version: 20191109233601
+! Checksum: +GkW6bYYVpK7bwUuHcti7w
+! Version: 20200202134628
 ! Title: Refreshing Tieba's Additional List
 ! Expires: 10 days
 ! Homepage: https://github.com/8qwe24657913/RefreshingTieba
@@ -12,8 +12,7 @@
 
 ! block resources
 ||tblcs.baidu.com
-||bcebos.com
-||bj.bcebos.com
+||bcebos.com$domain=tieba.baidu.com
 ||cpro.baidustatic.com
 ||entry.baidu.com
 ||tb1.bdstatic.com/tb/cms/ngmis/file_1483927579063.html
@@ -37,3 +36,7 @@ https://gsp0.baidu.com/5aAHeD3nKhI2p27j8IqW0jdnxx1xbK/tb/img/pv.gif?*
 /^https?://tb1\.bdstatic\.com\/\?\?\/tb\/_\/fixed_bar_\w+\.js$/
 ||www.2cq.com/third/tieba/sidebar
 ||aod-image.baidu.com
+||tb1.bdstatic.com/tb/tbPCPB%E6%B5%AE%E7%AA%97116x225.jpg
+||anti-bot.baidu.com
+||gss0.baidu.com/6qVSsjikBxIFlNKl8IuM_a/*
+! ||gsp0.baidu.com/5aAHeD3nKhI2p27j8IqW0jdnxx1xbK/*
