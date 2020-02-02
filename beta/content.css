@@ -111,10 +111,29 @@ a[href="https://tiebac.baidu.com/c/s/download/pc?src=webtbGF"],
 #m1800_canvas,
 [class^="ec-"],
 .cps_wrap,
+.hongbao_page_pop_common,
+#diversBanner,
+.appPromote,
+.appBottomPromote,
+html #pb_lzl_glob .appBottomPromote,
+.fixed_bar,
+.father-cut-daoliu-normal-box,
+.father-cut-daoliu-from-toutiao-box,
+.father-cut-recommend-normal-box,
+.father-cut-recommend-from-toutiao-box,
+.jump_page_pop_common,
+.j_collect_pop_common,
+.wake_app_tip,
+.footer-version,
+#pblist>li.class_hide_flag:not([data-tid]),
 .tbui_fbar_feedback,
 .tbui_fbar_nobottle,
 .tbui_fbar_bazhu {
     display: none !important;
+}
+
+#pblist>li.class_hide_flag[data-tid] {
+    display: block !important;
 }
 
 /*贴吧广告机器人*/
