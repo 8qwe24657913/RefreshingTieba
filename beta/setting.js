@@ -117,8 +117,10 @@ const scriptBlackList = [
     'tb1.bdstatic.com/tb/cms/(itieba/oftenforum_jsdata|ofjsdata).js(?|$)',
     'm.baidu.com/static/as/res2exe/js/',
     '(' +
-    [...Object.entries(HOSTMAP)].reduce((prev, [http, https]) => prev.concat([http, https.slice(8)]), []).join('|') +
-    ')/',
+        [...Object.entries(HOSTMAP)]
+            .reduce((prev, [http, https]) => prev.concat([http, https.slice(8)]), [])
+            .join('|') +
+        ')/',
 ].map(rule => '^https?://' + rule.replace(/(\.|\/|\?)/g, '\\$1'))
 // 屏蔽后需要覆盖原方法的模块
 function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService) {
@@ -205,6 +207,9 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
                 checkLogin: noop,
                 threadEasterEggsTrack: noop,
                 bindJoinVipStat: noop,
+                exposureTrack: noop,
+                bindMemberEvents: noop,
+                bindTopicEvent: noop,
             },
             'puser/widget/sign_mod_bright': {
                 handlePrintFlower: noop,
@@ -310,6 +315,10 @@ function getSpecialModules(noop, emptyStr, html5AudioPlayer, initGeeTestService)
             },
             'common/widget/SimplePoster': {
                 initGeeTestService,
+            },
+            'pplatform/widget/PlatformHead': {
+                initModuleStat: noop,
+                teslaHandler: noop,
             },
         },
         hook: {
